@@ -1,0 +1,8 @@
+html {
+    background-image: url("/images/mainAdminPage.jpg");
+    background-size: 1920px 1080px;
+    background-position: center;
+    background-repeat: no-repeat;
+    font-family: "Arial Black", sans-serif;
+    color: rebeccapurple;
+}

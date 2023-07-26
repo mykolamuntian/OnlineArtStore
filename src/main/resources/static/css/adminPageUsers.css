@@ -1,0 +1,79 @@
+html {
+    background-image: url("/images/adminPageUsers.jpg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    font-family: "Arial Black", sans-serif;
+    color: rebeccapurple;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+table, td, th {
+    border: 1px solid black;
+}
+
+td, th {
+    margin: 8px;
+    padding: 10px;
+}
+input[type="submit"] {
+    margin: 10px;
+    padding: 10px;
+    background-color: rebeccapurple;
+    color: white;
+    font-weight: bold;
+    width: 80px;
+    height: 40px;
+    border-radius: 10px;
+}
+.delete {
+    color: red;
+}
+.update {
+    color: green;
+}
+.frame {
+    max-width: 600px;
+    margin: 0 auto;
+    background-color: white;
+    border-radius: 5px;
+    padding: 20px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+}
+label {
+    display: block;
+    font-size: 18px;
+    margin-bottom: 8px;
+}
+input[type="text"],
+input[type="email"],
+input[type="date"],
+input[type="number"],
+input[type="checkbox"]
+{
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: none;
+    border-radius: 5px;
+    box-shadow: inset 0px 0px 5px rgba(0, 0, 0, 0.2);
+}
+select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: none;
+    border-radius: 5px;
+    box-shadow: inset 0px 0px 5px rgba(0, 0, 0, 0.2);
+}
+.error-message {
+    color: red;
+    font-size: 14px;
+    margin-top: 8px;
+}
+.name {
+    margin-left: 300px;
+}

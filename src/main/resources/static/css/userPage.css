@@ -1,0 +1,51 @@
+html {
+    background-image: url("/images/userPage.jpg");
+    background-size: 100% 100%;
+    background-position: center;
+    font-family: "Arial Black", sans-serif;
+    color: rebeccapurple;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+table, td, th {
+    border: 1px solid black;
+}
+
+td, th {
+    margin: 8px;
+    padding: 10px;
+}
+input {
+    margin-top: 0.5rem;
+}
+
+input::placeholder {
+    font-weight: bold;
+    opacity: 0.5;
+    color: purple;
+}
+input:invalid {
+    border: 2px dashed purple;
+}
+
+input:invalid:required {
+    background-image: linear-gradient(to right, pink, lightgreen);
+}
+
+input:valid {
+    border: 2px solid black;
+}
+input[type="submit"] {
+    margin: 10px;
+    padding: 10px;
+    background-color: plum;
+    color: white;
+    font-weight: bold;
+    width: 80px;
+    height: 40px;
+    border-radius: 10px;
+}
+

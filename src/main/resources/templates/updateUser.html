@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Online Art Store</title>
+    <link th:href="@{/css/updateAuction.css}" rel="stylesheet"/>
+    <meta id="_csrf" name="_csrf" th:content="${_csrf.token}"/>
+    <meta id="_csrf_header" name="_csrf_header" th:content="${_csrf.headerName}"/>
+    <meta name="userId" id="userId" th:content="${userId}"/>
+</head>
+<body>
+<h2 class="name">Update User information:</h2>
+<div class="frame">
+    <div>
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+    </div>
+    <div class="frame">
+        <label for="username">Login:</label>
+        <input type="text" id="username" name="username" required th:value="${user.username}"/>
+    </div>
+    <div class="frame">
+        <label for="password">Password:</label>
+        <input type="text" id="password" name="password" required th:value="${user.password}"/>
+    </div>
+    <div class="frame">
+        <input type="submit" id="saveUser" value="Press"/>
+    </div>
+</div>
+<div>
+    <a style="color: blue;" th:href="@{/adminPageUsers}">Back to admin page</a>
+</div>
+<script>
+    const saveUserButton = document.getElementById('saveUser');
+    const userIdMeta = document.getElementById("userId");
+    const userId = userIdMeta.content;
+    const baseURI = `http://localhost:8080/adminPageUsers/api/v3`;
+
+    async function saveUser() {
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
+
+        const user = {
+            username: usernameInput.value,
+            password: passwordInput.value
+        };
+        const csrfToken = document.getElementById('_csrf').content;
+        console.log("Token = " + csrfToken);
+        console.log("body: " + JSON.stringify(user));
+
+        const csrfHeader = document.getElementById('_csrf_header').content;
+        const response = await fetch(`${baseURI}/users/${userId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                [csrfHeader]: csrfToken
+            },
+            body: JSON.stringify(user)
+        });
+        console.log("**********" + response.status);
+        if (response.status === 201) {
+            const loc = response.headers.get('location');
+            const resp = await fetch(`http://localhost:8080${loc}`)
+            if(resp.status === 200){
+                let user = await resp.json();
+                console.log(user);
+                addUser(user)
+            }else{
+                alert('Error: ' + (await resp.text()));
+            }
+        } else {
+            alert('Error: ' + response.status);
+            console.error(await response.json());
+        }
+    }
+    saveUserButton.addEventListener('click', saveUser);
+</script>
+</body>
+</html>

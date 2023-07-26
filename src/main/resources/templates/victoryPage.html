@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>victoryPage</title>
+    <link th:href="@{/css/victoryPage.css}" rel="stylesheet"/>
+    <meta name="csrf-token" id="_csrf" th:content="${_csrf.token}"/>
+    <meta name="csrf-header" id="_csrf_header" th:content="${_csrf.headerName}"/>
+    <meta name="userId" id="userId" th:content="${userId}"/>
+</head>
+<body>
+<nav>
+    <menu>
+        <li><a th:href="@{/}">General page</a></li>
+        <li sec:authorize="isAuthenticated()">
+            <a th:href="@{/privatePage}">Private page</a></li>
+        <li sec:authorize="hasRole('ADMIN')">
+            <a th:href="@{/mainAdminPage}">Admin page</a></li>
+        <li sec:authorize="isAnonymous()">
+            <a th:href="@{/singup}">Sign Up</a></li>
+        <li sec:authorize="isAnonymous()">
+            <a th:href="@{/login}">Login</a></li>
+        <li sec:authorize="isAuthenticated()">
+            Welcome <span sec:authentication="name"></span>!
+        </li>
+        <li sec:authorize="isAuthenticated()">
+            <a th:href="@{/logout}">Logout</a></li>
+    </menu>
+</nav>
+<h2 sec:authorize="isAuthenticated()" style="color: darkblue">Welcome <span sec:authentication="name"></span>! </h2>
+
+<h1 style="color: brown">YOUR WINS IN AUCTIONS:</h1>
+<table>
+    <thead>
+    <tr>
+        <th>Title Auction:</th>
+        <th>Start Date:</th>
+        <th>End Date:</th>
+        <th>Starting Price:</th>
+        <th>Current Bet:</th>
+        <th>Active:</th>
+        <th>WINNER:</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:if="${auction.active == false && auction.winner==user.username}" th:each="auction:${auctions}">
+        <td th:text="${auction.titleAuction}"></td>
+        <td th:text="${auction.startDate}"></td>
+        <td th:text="${auction.endDate}"></td>
+        <td th:text="${auction.startingPrice}"></td>
+        <td th:text="${auction.currentBet}"></td>
+        <td th:text="${auction.active}"></td>
+        <td th:text="${auction.winner}"></td>
+    </tbody>
+</table>
+</body>
+</html>

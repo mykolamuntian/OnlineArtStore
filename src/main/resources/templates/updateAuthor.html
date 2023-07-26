@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Online Art Store</title>
+    <link th:href="@{/css/updateAuction.css}" rel="stylesheet"/>
+    <meta id="_csrf" name="_csrf" th:content="${_csrf.token}"/>
+    <meta id="_csrf_header" name="_csrf_header" th:content="${_csrf.headerName}"/>
+    <meta name="authorId" id="authorId" th:content="${authorId}"/>
+</head>
+<body>
+<h2 class="name">Update Author information:</h2>
+<div class="frame">
+    <div>
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+    </div>
+    <div class="frame">
+        <label for="pseudonym">Pseudonym:</label>
+        <input type="text" id="pseudonym" name="pseudonym" required th:value="${author.pseudonym}"/>
+    </div>
+    <div class="frame">
+        <label for="firstName">Author name:</label>
+        <input type="text" id="firstName" name="firstName" required th:value="${author.firstName}"/>
+    </div>
+    <div class="frame">
+        <label for="surname">Author surname:</label>
+        <input type="text" id="surname" name="surname" required th:value="${author.surname}"/>
+    </div>
+    <div class="frame">
+        <label for="birthDate">Author birthdate:</label>
+        <input type="date" id="birthDate" name="birthDate" required th:value="${author.birthDate}">
+    </div>
+    <div class="frame">
+        <label for="awards">Author awards:</label>
+        <input type="text" id="awards" name="awards" required th:value="${author.awards}">
+    </div>
+    <div class="frame">
+        <label for="imagePath">Author photo:</label>
+        <input type="text" id="imagePath" name="imagePath" required th:value="${author.imagePath}">
+    </div>
+    <div class="frame">
+        <input type="submit" id="authorSave" value="Press"/>
+    </div>
+</div>
+<div>
+    <a style="color: blue" th:href="@{/adminPage}">Back to admin page</a>
+</div>
+
+<script>
+    const saveAuthorButton = document.getElementById('authorSave');
+    const authorIdMeta = document.getElementById("authorId");
+    const authorId = authorIdMeta.content;
+    const baseURI = `http://localhost:8080/adminPage/api/v1`;
+
+    async function authorSave() {
+        const authorPseudonymInput = document.getElementById('pseudonym');
+        const authorFirstNameInput = document.getElementById('firstName');
+        const authorSurnameInput = document.getElementById('surname');
+        const authorBirthDateInput = document.getElementById('birthDate');
+        const authorAwardsInput = document.getElementById('awards');
+        const authorImagePathInput = document.getElementById('imagePath');
+        const author = {
+            pseudonym: authorPseudonymInput.value,
+            firstName: authorFirstNameInput.value,
+            surname: authorSurnameInput.value,
+            birthDate: authorBirthDateInput.value,
+            awards: authorAwardsInput.value,
+            imagePath: authorImagePathInput.value
+        };
+
+        const csrfToken = document.getElementById('_csrf').content;
+        console.log("Token = " + csrfToken);
+        const csrfHeader = document.getElementById('_csrf_header').content;
+        const response = await fetch(`${baseURI}/authors/${authorId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                [csrfHeader]: csrfToken
+            },
+            body: JSON.stringify(author)
+        });
+        console.log("Author!!!!!" + response.status);
+        if (response.status === 201) {
+            const loc = response.headers.get('location');
+            const resp = await fetch(`http://localhost:8080${loc}`)
+            addAuthor(await resp.json())
+        } else {
+            alert('Error: ' + response.status);
+        }
+    }
+    saveAuthorButton.addEventListener('click', authorSave);
+</script>
+</body>
+</html>

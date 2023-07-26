@@ -1,0 +1,48 @@
+html {
+    background-image: url("/images/singup.jpg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+h1 {
+    font-family: "Arial Black", sans-serif;
+    align-items: center;
+}
+form {
+    width: 400px;
+    height: 400px;
+    font-family: "Arial Black", sans-serif;
+    margin-top: 40px;
+    margin-bottom: 40px;
+    padding: 10px;
+}
+.frame {
+    max-width: 600px;
+    margin: 0 auto;
+    background-color: white;
+    border-radius: 5px;
+    padding: 20px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+}
+label {
+    display: block;
+    font-size: 18px;
+    margin-bottom: 8px;
+}
+
+input[type="submit"] {
+    margin: 10px;
+    padding: 10px;
+    background-color: purple;
+    color: white;
+    font-weight: bold;
+    width: 80px;
+    height: 40px;
+    border-radius: 10px;
+}

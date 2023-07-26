@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Online Art Store</title>
+    <link th:href="@{/css/generalPage.css}" rel="stylesheet"/>
+</head>
+<body>
+<nav>
+    <menu>
+        <li><a th:href="@{/}">General page</a></li>
+        <li sec:authorize="isAuthenticated()">
+            <a th:href="@{/privatePage}">Private page</a></li>
+        <li sec:authorize="hasRole('ADMIN')">
+            <a th:href="@{/mainAdminPage}">Admin page</a></li>
+        <li sec:authorize="isAnonymous()">
+            <a th:href="@{/singup}">Sign Up</a></li>
+        <li sec:authorize="isAnonymous()">
+            <a th:href="@{/login}">Login</a></li>
+        <li sec:authorize="isAuthenticated()">
+            Welcome <span sec:authentication="name"></span>!
+        </li>
+        <li sec:authorize="isAuthenticated()">
+            <a th:href="@{/logout}">Logout</a></li>
+    </menu>
+</nav>
+<div th:class="core">-WELCOME TO THE ART AUCTION-</div><div class="advice">* To become a participant of the Auction, register at the link: Sign up.</div>
+<div th:class="principal">-GALLERY-</div><div class="advice">* If you have already registered, please use the following link: Login.</div>
+<div class="gallery">
+    <div class="gallery-item" th:each="painting:${paintings}">
+        <a th:href="@{${'/images/' + painting.imagePath + '_large.jpg'}}">
+            <img th:src="@{${'/images/' + painting.imagePath + '_small.jpg'}}" alt="" onclick="this.src=this.src.replace('_small.jpg','.jpg')" />
+            <div class="caption" th:text="${painting.title}"></div>
+        </a>
+    </div>
+</div>
+</body>
+</html>

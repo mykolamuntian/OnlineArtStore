@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Online Art Store</title>
+    <link th:href="@{/css/mainAdminPage.css}" rel="stylesheet"/>
+</head>
+<body>
+<nav>
+    <menu>
+        <ul>
+            <li><a th:href="@{/}">General page</a></li>
+            <li sec:authorize="isAuthenticated()">
+                <a th:href="@{/privatePage}">Private page</a></li>
+            <li sec:authorize="hasRole('ADMIN')">
+                <a th:href="@{/mainAdminPage}">ADMIN MENU:</a>
+                <ol type="1">
+                    <li><a th:href="@{/adminPage}">Create or view a PICTURE, CATEGORY, AUTHOR, AUCTION</a></li>
+                    <li><a th:href="@{/adminPageUsers}">All USERS</a></li>
+                </ol>
+            </li>
+            <li sec:authorize="isAnonymous()">
+                <a th:href="@{/singup}">Sign Up</a></li>
+            <li sec:authorize="isAnonymous()">
+                <a th:href="@{/login}">Login</a></li>
+            <li sec:authorize="isAuthenticated()">
+                Welcome <span sec:authentication="name"></span>!
+            </li>
+            <li sec:authorize="isAuthenticated()">
+                <a th:href="@{/logout}">Logout</a></li>
+        </ul>
+    </menu>
+</nav>
+<h1 style="color:deeppink">Main admin page</h1>
+</body>
+</html>

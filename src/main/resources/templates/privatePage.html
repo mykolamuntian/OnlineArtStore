@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>PrivatePage</title>
+    <link th:href="@{/css/privatePage.css}" rel="stylesheet"/>
+    <meta name="csrf-token" id="_csrf" th:content="${_csrf.token}"/>
+    <meta name="csrf-header" id="_csrf_header" th:content="${_csrf.headerName}"/>
+    <meta name="userId" id="userId" th:content="${userId}"/>
+</head>
+<body>
+<nav>
+    <menu>
+        <li><a th:href="@{/}">General page</a></li>
+        <li sec:authorize="isAuthenticated()">
+            <a th:href="@{/privatePage}">Private page</a></li>
+        <li sec:authorize="hasRole('ADMIN')">
+            <a th:href="@{/mainAdminPage}">Admin page</a></li>
+        <li sec:authorize="isAnonymous()">
+            <a th:href="@{/singup}">Sign Up</a></li>
+        <li sec:authorize="isAnonymous()">
+            <a th:href="@{/login}">Login</a></li>
+        <li sec:authorize="isAuthenticated()">
+            Welcome <span sec:authentication="name"></span>!
+        </li>
+        <li sec:authorize="isAuthenticated()">
+            <a th:href="@{/logout}">Logout</a></li>
+    </menu>
+</nav>
+<h2 sec:authorize="isAuthenticated()" style="color: fuchsia">Welcome <span sec:authentication="name"></span>! </h2>
+
+<h2>Active Auctions:</h2>
+<table>
+    <thead>
+    <tr>
+        <th>Title Auction:</th>
+        <th>Start Date:</th>
+        <th>End Date:</th>
+        <th>Starting Price:</th>
+        <th>Current Bet:</th>
+        <th>Active:</th>
+        <th>You can:</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:if="${auction.active == true}" th:each="auction:${auctions}">
+        <td th:text="${auction.titleAuction}"></td>
+        <td th:text="${auction.startDate}"></td>
+        <td th:text="${auction.endDate}"></td>
+        <td th:text="${auction.startingPrice}"></td>
+        <td th:text="${auction.currentBet}"></td>
+        <td th:text="${auction.active}"></td>
+        <td><a class="participate-link" th:href="@{/participateAuction/{auctionId}(auctionId=${auction.id})}">Participate!</a>
+        </td>
+    </tbody>
+</table>
+<h2>Victories:</h2>
+<div th:each="user:${users}">
+    <h3 th:each="user : ${user}"><a th:class="part" th:if="${#authentication.getName() == user.username}" th:href="@{/victoryPage/{userId}(userId=${user.id})}">Auctions won <span sec:authentication="name"></span></a></h3>
+</div>
+<h4>* If you are the lucky winner of the auction, please fill in additional information about yourself so that our manager can contact you to send your prize.</h4>
+
+<div th:each="user:${users}">
+    <h3 th:each="user : ${user}"><a th:class="part" th:if="${#authentication.getName() == user.username}" th:href="@{/userPage/{userId}(userId=${user.id})}">Additional information about the <span sec:authentication="name"></span></a></h3>
+</div>
+<h2>Artworks participating in Auctions:</h2>
+<table>
+    <thead>
+    <tr>
+        <th>Title</th>
+        <th>ImagePath</th>
+        <th>Size</th>
+        <th>Material</th>
+        <th>Price</th>
+        <th>Sold</th>
+        <th>Category</th>
+        <th>Author</th>
+        <th>Auction</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:if="${painting.auction!=null && painting.sold==false}" th:each="painting:${paintings}">
+        <td th:text="${painting.title}"></td>
+        <td>
+            <a th:href="@{${'/images/' + painting.imagePath + '_large.jpg'}}">
+                <img th:src="@{${'/images/' + painting.imagePath + '_small.jpg'}}" alt="" onclick="this.src=this.src.replace('_small.jpg','.jpg')" />
+            </a>
+        </td>
+        <td th:text="${painting.size}"></td>
+        <td th:text="${painting.material}"></td>
+        <td th:text="${painting.price}"></td>
+        <td th:text="${painting.sold}"></td>
+        <td th:text="${painting.category.name}"></td>
+        <td th:text="${painting.author.pseudonym}"></td>
+        <td th:text="${painting.auction.titleAuction}"></td>
+    </tbody>
+</table>
+
+<h2>Our talented artists:</h2>
+<table>
+    <thead>
+    <tr>
+        <th>Pseudonym:</th>
+        <th>FirstName:</th>
+        <th>Surname:</th>
+        <th>BirthDate:</th>
+        <th>Awards:</th>
+        <th>ImagePath:</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="author:${authors}">
+        <td th:text="${author.pseudonym}"></td>
+        <td th:text="${author.firstName}"></td>
+        <td th:text="${author.surname}"></td>
+        <td th:text="${author.birthDate}"></td>
+        <td th:text="${author.awards}"></td>
+        <td>
+            <a th:href="@{${'/images/' + author.imagePath + '_large.jpg'}}">
+                <img th:src="@{${'/images/' + author.imagePath + '_small.jpg'}}" alt="" onclick="this.src=this.src.replace('_small.jpg','.jpg')" />
+            </a>
+        </td>
+    </tbody>
+</table>
+<script>
+    // беру все "Participate!" ссылки на странице
+    const baseURI = 'http://localhost:8080/participateAuction/';
+    const participateLinks = document.querySelectorAll('.participate-link');
+
+    participateLinks.forEach(link => {
+        link.addEventListener('click', async (event) => {
+            event.preventDefault(); // Запрещаю переход по ссылке на новую страницу!
+
+            // Получаю auctionId из атрибута href ссылки
+            const auctionId = link.href.split('/').pop();
+
+            try {
+                // Получаю идентификатор текущего пользователя из файла cookie или локального хранилища!
+                localStorage.setItem('userId', userId);
+
+                const csrfToken = document.getElementById('_csrf').content;
+                console.log("Token = " + csrfToken);
+                const csrfHeader = document.getElementById('_csrf_header').content;
+
+                // Отправляю POST-запрос к конечной точке participateAuction endpoint with the auctionId and userId parameters
+                const response = await fetch(`${baseURI}${auctionId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        [csrfHeader]: csrfToken
+                    },
+                    body: JSON.stringify({ userId })
+                });
+                console.log(auctionId);
+                console.log(userId);
+                if (response.ok) {
+                    // Перезагрузка страницу, чтобы увидеть обновленную информацию об аукционе
+                    window.location.reload();
+                    // Теперь переходим по ссылке!
+                    window.location.href = link.href;
+                } else {
+                    console.error(`Failed to participate in Auction ${auctionId}: ${response.statusText}`);
+                }
+            } catch (error) {
+                console.error(`Failed to participate in Auction ${auctionId}: ${error}`);
+            }
+        });
+    });
+</script>
+</body>
+</html>

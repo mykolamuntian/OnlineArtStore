@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Online Art Store</title>
+    <link th:href="@{/css/userPage.css}" rel="stylesheet"/>
+    <meta name="csrf-token" id="_csrf" th:content="${_csrf.token}"/>
+    <meta name="csrf-header" id="_csrf_header" th:content="${_csrf.headerName}"/>
+    <meta name="userId" id="userId" th:content="${userId}"/>
+    <meta name="userDetailId" id="userDetailId" th:content="${userDetailId}"/>
+</head>
+<body>
+<nav>
+    <menu>
+        <li><a th:href="@{/}">General page</a></li>
+        <li sec:authorize="isAuthenticated()">
+            <a th:href="@{/privatePage}">Private page</a></li>
+        <li sec:authorize="hasRole('ADMIN')">
+            <a th:href="@{/mainAdminPage}">Admin page</a></li>
+        <li sec:authorize="isAnonymous()">
+            <a th:href="@{/singup}">Sign Up</a></li>
+        <li sec:authorize="isAnonymous()">
+            <a th:href="@{/login}">Login</a></li>
+        <li style="color: purple" sec:authorize="isAuthenticated()">
+            Welcome <span sec:authentication="name"></span>!
+        </li>
+        <li sec:authorize="isAuthenticated()">
+            <a th:href="@{/logout}">Logout</a></li>
+    </menu>
+</nav>
+<h4>Dear participant of the auction, fill in additional information about yourself, in case of your victory,
+    a notification will be sent to your e-mail and phone,
+    and the art object will be sent to the address you specified.</h4>
+<h2>Full registration:</h2>
+<div>
+    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+    <div>
+        <label for="firstName">What is Your name? (required)</label>
+        <input type="text" id="firstName" name="firstName" placeholder="Anna"/>
+    </div>
+    <div>
+        <label for="lastName">What is Your second name? (required)</label>
+        <input type="text" id="lastName" name="lastName" placeholder="Smith"/>
+    </div>
+    <div>
+        <label for="birthDate">What is Your date of birth? (required)</label>
+        <input type="date" id="birthDate" name="birthDate"/>
+    </div>
+    <div>
+        <label for="email">What is Your email address? (required)</label>
+        <input type="email" id="email" name="email" placeholder="annasmith@gmail.com"/>
+    </div>
+    <div>
+        <label for="telephone">What is Your phone number? (required)</label>
+        <input type="text" id="telephone" name="telephone" placeholder="095-000-01-02"/>
+    </div>
+    <div>
+        <input type="submit" id="saveUserDetail"/>
+    </div>
+</div>
+<h4>Hint for you:</h4>
+<ul th:each="error: ${errors}">
+    <li th:text="${error.defaultMessage}"></li>
+</ul>
+<h2>Information about You:</h2>
+<table>
+    <thead>
+    <tr>
+        <th>Id:</th>
+        <th>First name:</th>
+        <th>Last name:</th>
+        <th>Birthdate:</th>
+        <th>Email:</th>
+        <th>Telephone:</th>
+        <th>User`s login:</th>
+        <th>UPDATE</th>
+    </tr>
+    </thead>
+    <tbody id="UserDetails-table"></tbody>
+</table>
+<script>
+    const saveUserDetailButton = document.getElementById('saveUserDetail');
+    const userDetailsTable = document.getElementById('UserDetails-table');
+    const baseURI = 'http://localhost:8080/adminPageUsers/api/v3';
+    const userIdMeta = document.getElementById("userId");
+    const userId = userIdMeta.content;
+    const user = document.username;
+
+
+    function addUserDetail(userDetail) {
+        const tr = document.createElement('tr');
+        const tdUpdate = document.createElement('td');
+        tdUpdate.innerHTML = `<a style="color: blue" href='/updateUserDetailClient/${userDetail.id}/${userId}'>UPDATE</a>`;
+
+        for (const prop in userDetail) {
+            const td = document.createElement('td');
+            if (prop === 'user') {
+                td.append(document.createTextNode(userDetail[prop].username)); // выводит логин User
+            } else {
+                td.append(document.createTextNode(userDetail[prop]));
+            }
+            tr.append(td);
+            tr.append(tdUpdate);
+        }
+        userDetailsTable.append(tr);
+    }
+
+    function fillTableUserDetails(userDetails) {
+        userDetailsTable.innerHTML = '';
+        userDetails.forEach(userDetail => {
+            console.log(userDetail.user.id + " = " + userId);
+            if (userDetail.user.id == userId) {
+                console.log("enter to if");
+                addUserDetail(userDetail);
+            }
+        })
+
+    }
+
+    async function loadUserDetails() {
+        const response = await fetch(`${baseURI}/userDetails`, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json'
+            }
+        });
+        const userDetails = await response.json();
+        console.log(userDetails);
+        fillTableUserDetails(userDetails);
+    }
+
+    window.addEventListener('load', loadUserDetails);
+
+    async function saveUserDetail() {
+        const firstNameInput = document.getElementById('firstName');
+        const lastNameInput = document.getElementById('lastName');
+        const birthDateInput = document.getElementById('birthDate');
+        const emailInput = document.getElementById('email');
+        const telephoneInput = document.getElementById('telephone');
+
+        const userDetail = {
+            firstName: firstNameInput.value,
+            lastName: lastNameInput.value,
+            birthDate: birthDateInput.value,
+            email: emailInput.value,
+            telephone: telephoneInput.value,
+            userId: userId
+        };
+        const csrfToken = document.getElementById('_csrf').content;
+        const csrfHeader = document.getElementById('_csrf_header').content;
+        const response = await fetch(`${baseURI}/userDetails`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                [csrfHeader]: csrfToken
+            },
+            body: JSON.stringify(userDetail)
+        });
+        console.log(response.status);
+        if (response.status === 201) {
+            const loc = response.headers.get('location');
+            const resp = await fetch(`http://localhost:8080${loc}`)
+            if (resp.status === 200) {
+                let userDetail = await resp.json();
+                console.log(userDetail);
+                addUserDetail(userDetail)
+            } else {
+                alert('Error: ' + resp.status);
+                console.error(await resp.json());
+            }
+        } else if (response.status === 409) { //вывод сообщения для пользователя UserDetailRestController
+            alert("You cannot create additional information about yourself, as it already exists. To change your data, click on the update button.");
+        } else if (response.status === 400) { //вывод сообщения для пользователя UserDetailRestController
+            alert("Check spelling:\n" +
+                "1. Date of birth.\n" +
+                "2. Email.\n" +
+                "3. Phone number.");
+        } else {
+            alert('Error: ' + response.status);
+            console.error(await response.json());
+        }
+    }
+
+    saveUserDetailButton.addEventListener('click', saveUserDetail);
+</script>
+</body>
+</html>

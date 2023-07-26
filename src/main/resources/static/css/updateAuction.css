@@ -1,0 +1,71 @@
+html {
+    background-image: url("/images/updateAuction.jpg");
+    background-size: 1920px 1080px;
+    background-position: center;
+    font-family: "Arial Black", sans-serif;
+    color: rebeccapurple;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+table, td, th {
+    border: 1px solid black;
+}
+
+td, th {
+    margin: 8px;
+    padding: 10px;
+}
+h2 {
+    margin-left: 300px;
+}
+
+.frame {
+    max-width: 600px;
+    margin: 0 auto;
+    background-color: white;
+    border-radius: 5px;
+    padding: 20px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+}
+
+.name {
+    margin-left: 300px;
+}
+label {
+    display: block;
+    font-size: 18px;
+    margin-bottom: 8px;
+}
+input[type="text"],
+input[type="email"],
+input[type="date"],
+input[type="number"],
+input[type="checkbox"]{
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: none;
+    border-radius: 5px;
+    box-shadow: inset 0px 0px 5px rgba(0, 0, 0, 0.2);
+}
+input[type="submit"] {
+    background-color: rebeccapurple;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+}
+
+input[type="submit"]:hover {
+    background-color: purple;
+}
+.error-message {
+    color: red;
+    font-size: 14px;
+    margin-top: 8px;
+}

@@ -1,0 +1,31 @@
+html {
+    background-image: url("/images/allBets.jpg");
+    background-size: cover;
+    background-position: center;
+    font-family: "Arial Black", sans-serif;
+    color: rebeccapurple;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+table, td, th {
+    border: 1px solid black;
+}
+
+td, th {
+    margin: 8px;
+    padding: 10px;
+}
+#current_date_time_block {
+    color: rebeccapurple;
+    border-radius: 10px;
+    font-size: 14pt;
+    border: 2px solid purple;
+    background: plum;
+    padding: 5px 20px;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}

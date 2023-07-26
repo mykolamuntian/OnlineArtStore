@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Sign Up</title>
+    <link th:href="@{/css/singup.css}" rel="stylesheet"/>
+</head>
+<body>
+<form method="post">
+    <h1 style="color: purple">Sign up:</h1>
+    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+    <div class="frame">
+        <label for="username">Login:</label>
+        <input type="text" id="username" name="username" required/>
+    </div>
+    <div class="frame">
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required/>
+    </div>
+    <div class="frame">
+        <input type="submit" value="Press"/>
+    </div>
+</form>
+</body>
+</html>

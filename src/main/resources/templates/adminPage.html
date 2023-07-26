@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Online Art Store</title>
+    <link th:href="@{/css/adminPage.css}" rel="stylesheet"/>
+    <meta id="_csrf" name="_csrf" th:content="${_csrf.token}"/>
+    <meta id="_csrf_header" name="_csrf_header" th:content="${_csrf.headerName}"/>
+</head>
+<body>
+<nav>
+    <menu>
+        <ul>
+            <li><a th:href="@{/}">General page</a></li>
+            <li sec:authorize="isAuthenticated()">
+                <a th:href="@{/privatePage}">Private page</a></li>
+            <li sec:authorize="hasRole('ADMIN')">
+                <a th:href="@{/mainAdminPage}">ADMIN MENU:</a>
+                <ol type="1">
+                    <li><a th:href="@{/adminPage}">Create or view a PICTURE, CATEGORY, AUTHOR, AUCTION</a></li>
+                    <li><a th:href="@{/adminPageUsers}">All USERS</a></li>
+                </ol>
+            </li>
+            <li sec:authorize="isAnonymous()">
+                <a th:href="@{/singup}">Sign Up</a></li>
+            <li sec:authorize="isAnonymous()">
+                <a th:href="@{/login}">Login</a></li>
+            <li sec:authorize="isAuthenticated()">
+                Welcome <span sec:authentication="name"></span>!
+            </li>
+            <li sec:authorize="isAuthenticated()">
+                <a th:href="@{/logout}">Logout</a></li>
+        </ul>
+    </menu>
+</nav>
+<h1 style="color:deeppink">Create or view a PICTURE, CATEGORY, AUTHOR, AUCTION.</h1>
+<h2 class="name">Create new Painting for auction:</h2>
+<div class="frame">
+    <div>
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+    </div>
+    <div class="frame">
+        <label for="title">Title:</label>
+        <input type="text" id="title" name="title"/>
+    </div>
+    <div class="frame">
+        <label for="published">Published:</label>
+        <input type="date" id="published" name="published"/>
+    </div>
+    <div class="frame">
+        <label for="imageFile">FILE:</label>
+        <input type="file" name="imageFile" id="imageFile">
+    </div>
+    <div class="frame">
+        <label for="size">Size:</label>
+        <input type="text" id="size" name="size"/>
+    </div>
+    <div class="frame">
+        <label for="material">Material:</label>
+        <input type="text" id="material" name="material"/>
+    </div>
+    <div class="frame">
+        <label for="description">Description:</label>
+        <input type="text" id="description" name="description"/>
+    </div>
+    <div class="frame">
+        <label for="price">Price:</label>
+        <input type="number" id="price" name="price"/>
+    </div>
+    <div class="frame">
+        <label for="sold">SOLD:</label>
+        <input type="checkbox" id="sold" name="sold"/>
+    </div>
+    <div class="frame">
+        <label for="authors">Author:</label>
+        <select name="authors" id="authors"></select>
+    </div>
+    <div class="frame">
+        <label for="categories">Category:</label>
+        <select name="categories" id="categories"></select>
+    </div>
+    <div class="frame">
+        <label for="auctions">Auction:</label>
+        <select name="auctions" id="auctions"></select>
+    </div>
+    <div class="frame">
+        <input type="submit" id="save" value="Press"/>
+    </div>
+</div>
+
+<!--<h2 class="name">Create new Painting for auction:</h2>-->
+<!--<div class="frame">-->
+<!--    <div>-->
+<!--        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>-->
+<!--    </div>-->
+<!--    <div class="frame">-->
+<!--        <label for="title">Title:</label>-->
+<!--        <input type="text" id="title" name="title"/>-->
+<!--    </div>-->
+<!--    <div class="frame">-->
+<!--        <label for="published">Published:</label>-->
+<!--        <input type="date" id="published" name="published"/>-->
+<!--    </div>-->
+<!--    <div class="frame">-->
+<!--        <label for="imagePath">Image path:</label>-->
+<!--        <input type="text" id="imagePath" name="imagePath"/>-->
+<!--    </div>-->
+<!--    <div class="frame">-->
+<!--        <label for="size">Size:</label>-->
+<!--        <input type="text" id="size" name="size"/>-->
+<!--    </div>-->
+<!--    <div class="frame">-->
+<!--        <label for="material">Material:</label>-->
+<!--        <input type="text" id="material" name="material"/>-->
+<!--    </div>-->
+<!--    <div class="frame">-->
+<!--        <label for="description">Description:</label>-->
+<!--        <input type="text" id="description" name="description"/>-->
+<!--    </div>-->
+<!--    <div class="frame">-->
+<!--        <label for="price">Price:</label>-->
+<!--        <input type="number" id="price" name="price"/>-->
+<!--    </div>-->
+<!--    <div class="frame">-->
+<!--        <label for="sold">SOLD:</label>-->
+<!--        <input type="checkbox" id="sold" name="sold"/>-->
+<!--    </div>-->
+<!--    <div class="frame">-->
+<!--        <label for="authors">Author:</label>-->
+<!--        <select name="authors" id="authors"></select>-->
+<!--    </div>-->
+<!--    <div class="frame">-->
+<!--        <label for="categories">Category:</label>-->
+<!--        <select name="categories" id="categories"></select>-->
+<!--    </div>-->
+<!--    <div class="frame">-->
+<!--        <label for="auctions">Auction:</label>-->
+<!--        <select name="auctions" id="auctions"></select>-->
+<!--    </div>-->
+<!--    <div class="frame">-->
+<!--        <input type="submit" id="save" value="Press"/>-->
+<!--    </div>-->
+<!--</div>-->
+
+
+<h2 class="name">Create new Category:</h2>
+<div class="frame">
+    <div class="frame">
+        <label for="categoryName">Category name:</label>
+        <input type="text" id="categoryName" name="categoryName">
+    </div>
+    <div class="frame">
+        <input type="submit" id="categorySave" value="Press"/>
+    </div>
+</div>
+
+<h2 class="name">Create new Author:</h2>
+<div class="frame">
+    <div>
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+    </div>
+    <div class="frame">
+        <label for="pseudonym">Pseudonym:</label>
+        <input type="text" id="pseudonym" name="pseudonym">
+    </div>
+    <div class="frame">
+        <label for="firstName">Author name:</label>
+        <input type="text" id="firstName" name="firstName">
+    </div>
+    <div class="frame">
+        <label for="surname">Author surname:</label>
+        <input type="text" id="surname" name="surname">
+    </div>
+    <div class="frame">
+        <label for="birthDate">Author birthdate:</label>
+        <input type="date" id="birthDate" name="birthDate">
+    </div>
+    <div class="frame">
+        <label for="awards">Author awards:</label>
+        <input type="text" id="awards" name="awards">
+    </div>
+    <div class="frame">
+        <label for="imagePathAuthor">Author photo:</label>
+        <input type="text" id="imagePathAuthor" name="imagePathAuthor">
+    </div>
+    <div class="frame">
+        <input type="submit" id="authorSave" value="Press"/>
+    </div>
+</div>
+
+<h2 class="name">Create new Auction:</h2>
+<div class="frame">
+    <div>
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+    </div>
+    <div class="frame">
+        <label for="titleAuction">Title:</label>
+        <input type="text" id="titleAuction" name="titleAuction"/>
+    </div>
+    <div class="frame">
+        <label for="startDate">Start Date:</label>
+        <input type="datetime-local" id="startDate" name="startDate"/>
+    </div>
+    <div class="frame">
+        <label for="endDate">End Date:</label>
+        <input type="datetime-local" id="endDate" name="endDate"/>
+    </div>
+    <div class="frame">
+        <label for="startingPrice">Starting Price:</label>
+        <input type="number" id="startingPrice" name="startingPrice"/>
+    </div>
+    <div class="frame">
+        <label for="currentBet">Current Bet:</label>
+        <input type="number" id="currentBet" name="currentBet"/>
+    </div>
+    <div class="frame">
+        <label for="active">Active:</label>
+        <input type="checkbox" id="active" name="active"/>
+    </div>
+    <div class="frame">
+        <label for="winner">Winner:</label>
+        <input type="text" id="winner" name="winner"/>
+    </div>
+    <div class="frame">
+        <input type="submit" id="auctionSave" value="Press"/>
+    </div>
+</div>
+
+<h2>Paintings table, Paintings that take part in the Auction:</h2>
+<table>
+    <thead>
+    <tr>
+        <th>Id:</th>
+        <th>Title:</th>
+        <th>Published:</th>
+        <th>Image path:</th>
+        <th>Size:</th>
+        <th>Material:</th>
+        <th>Description:</th>
+        <th>Price:</th>
+        <th>SOLD:</th>
+        <th>Author:</th>
+        <th>Category:</th>
+        <th>Auction:</th>
+        <th>DELETE:</th>
+        <th>UPDATE:</th>
+    </tr>
+    </thead>
+    <tbody id="Paintings-table">
+    </tbody>
+</table>
+
+<h2>Categories table:</h2>
+<div>
+    <table>
+        <thead>
+        <tr>
+            <th>Id:</th>
+            <th>Category name:</th>
+            <th>DELETE:</th>
+            <th>UPDATE:</th>
+        </tr>
+        </thead>
+        <tbody id="Categories-table"></tbody>
+    </table>
+</div>
+
+<h2>Authors table:</h2>
+<table>
+    <thead>
+    <tr>
+        <th>Id:</th>
+        <th>Pseudonym:</th>
+        <th>First name</th>
+        <th>Surname:</th>
+        <th>Birthdate:</th>
+        <th>Awards:</th>
+        <th>Image path:</th>
+        <th>DELETE:</th>
+        <th>UPDATE:</th>
+    </tr>
+    </thead>
+    <tbody id="Authors-table"></tbody>
+</table>
+
+<h2>Auctions table:</h2>
+<table>
+    <thead>
+    <tr>
+        <th>Id:</th>
+        <th>Title Auction:</th>
+        <th>Start Date:</th>
+        <th>End Date:</th>
+        <th>Starting Price:</th>
+        <th>Current Bet:</th>
+        <th>Active:</th>
+        <th>Winner:</th>
+        <th>Participants:</th>
+        <th>DELETE:</th>
+        <th>UPDATE:</th>
+        <th>BETS:</th>
+    </tr>
+    </thead>
+    <tbody id="Auctions-table"></tbody>
+</table>
+
+<script>
+    const baseURI = 'http://localhost:8080/adminPage/api/v1';
+    const paintingsTable = document.getElementById('Paintings-table');
+    const savePaintingButton = document.getElementById('save');
+
+    const imagesBaseURL = 'http://localhost:8080/images/';
+
+    const categoriesTable = document.getElementById('Categories-table');
+    const saveCategoryButton = document.getElementById('categorySave');
+
+    const authorsTable = document.getElementById('Authors-table');
+    const saveAuthorButton = document.getElementById('authorSave');
+
+    const auctionsTable = document.getElementById('Auctions-table');
+    const saveAuctionButton = document.getElementById('auctionSave');
+
+    const csrfToken = document.getElementById('_csrf').content;
+
+    const csrfHeader = document.getElementById('_csrf_header').content;
+
+    // function addPainting(painting) {
+    //     const tr = document.createElement('tr');
+    //     tr.dataset.paintingId = painting.id;
+    //     const tdDelete = document.createElement('td');
+    //     const tdUpdate = document.createElement('td');
+    //     tdDelete.innerHTML = `<a href="#" onclick="deletePainting(${painting.id})">DELETE</a>`;
+    //     tdUpdate.innerHTML = `<a href='/updatePainting/${painting.id}'>UPDATE</a>`;
+    //     for (const prop in painting) {
+    //         const td = document.createElement('td');
+    //         if (prop === 'author') {
+    //             td.append(document.createTextNode(painting[prop].pseudonym));
+    //         } else if (prop === 'category') {
+    //             td.append(document.createTextNode(painting[prop].name));
+    //         } else if (prop === 'auction') {
+    //             td.append(document.createTextNode(painting[prop].titleAuction));
+    //         } else if (prop === 'imagePath') {
+    //             const tdImage = document.createElement('td');
+    //             const imgLink = document.createElement('a');
+    //             imgLink.href = imagesBaseURL + painting.imagePath + '_large.jpg';
+    //             const img = document.createElement('img');
+    //             img.src = imagesBaseURL + painting.imagePath + '_small.jpg';
+    //             img.alt = '';
+    //             img.onclick = function () {
+    //                 this.src = this.src.replace('_small.jpg', '.jpg');
+    //             }
+    //             imgLink.append(img);
+    //             tdImage.append(imgLink);
+    //             td.append(tdImage);
+    //         } else {
+    //             td.append(document.createTextNode(painting[prop]));
+    //         }
+    //         tr.append(td);
+    //     }
+    //     tr.append(tdDelete);
+    //     tr.append(tdUpdate);
+    //     paintingsTable.append(tr);
+    // }
+
+    async function addPainting(painting) {
+        const tr = document.createElement('tr');
+        tr.dataset.paintingId = painting.id;
+        const tdDelete = document.createElement('td');
+        const tdUpdate = document.createElement('td');
+        tdDelete.innerHTML = `<a class="delete" href="#" onclick="deletePainting(${painting.id})">DELETE</a>`;
+        tdUpdate.innerHTML = `<a class="update" href='/updatePainting/${painting.id}'>UPDATE</a>`;
+
+        for (const prop in painting) {
+            const td = document.createElement('td');
+            if (prop === 'author') {
+                td.append(document.createTextNode(painting[prop].pseudonym));
+            } else if (prop === 'category') {
+                td.append(document.createTextNode(painting[prop].name));
+            } else if (prop === 'auction') {
+                td.append(document.createTextNode(painting[prop].titleAuction));
+            } else if (prop === 'imageLink') { // Змінюємо на 'imageFile'
+                // Додатковий елемент для зберігання URL зображення
+                const imgURLContainer = document.createElement('div');
+
+                const imgLink = document.createElement('a');
+                imgLink.href = ''; // По замовчуванню URL порожній
+                const img = document.createElement('img');
+                img.src = painting[prop]; // По замовчуванню URL порожній
+                img.alt = 'Image from URL';
+                // img.onclick = function () {
+                //     this.src = this.src.replace('_small.jpg', '.jpg');
+                // }
+
+                // // Функція для завантаження зображення на сервер
+                // async function uploadImage() {
+                //     const formData = new FormData();
+                //     formData.append('imageFile', painting[prop]);
+
+                //     const response = await fetch(`${baseURI}/uploadImage`, {
+                //         method: 'POST',
+                //         headers: {
+                //             [csrfHeader]: csrfToken
+                //         },
+                //         body: formData
+                //     });
+
+                //     if (response.status === 200) {
+                //         const data = await response.json();
+                //         imageURL = data.imageURL;
+                //         imgLink.href = imagesBaseURL + imageURL + '_large.jpg';
+                //         img.src = imagesBaseURL + imageURL + '_small.jpg';
+                //     } else {
+                //         alert('Error uploading image: ' + response.status);
+                //     }
+                // }
+
+                // Виклик функції для завантаження зображення
+                // await uploadImage();
+
+                imgLink.append(img);
+                imgURLContainer.append(imgLink);
+                td.append(imgURLContainer);
+            } else {
+                td.append(document.createTextNode(painting[prop]));
+            }
+            tr.append(td);
+        }
+        tr.append(tdDelete);
+        tr.append(tdUpdate);
+        paintingsTable.append(tr);
+    }
+
+
+
+    async function deletePainting(id) {
+        const csrfToken = document.getElementById('_csrf').content;
+        console.log("Token = " + csrfToken);
+
+        const csrfHeader = document.getElementById('_csrf_header').content;
+
+        const response = await fetch(`${baseURI}/paintings/${id}`, {
+            method: 'DELETE',
+            headers: {
+                [csrfHeader]: csrfToken
+            }
+        });
+        console.log("**********" + response.status);
+        if (response.status === 200) {
+            const row = paintingsTable.querySelector(`[data-painting-id="${id}"]`);
+            if (row) {
+                row.remove();
+            }
+        } else {
+            alert('Error: ' + response.status);
+            console.error(await response.json());
+        }
+    }
+
+    function addCategory(category) {
+        const tr = document.createElement('tr');
+        tr.dataset.categoryId = category.id; //идентификатор строки в таблице Category
+        const tdDelete = document.createElement('td');
+        const tdUpdate = document.createElement('td');
+        tdDelete.innerHTML = `<a class="delete"href="#" onclick="deleteCategory(${category.id})">DELETE</a>`;
+        tdUpdate.innerHTML = `<a class="update" href='/updateCategory/${category.id}'>UPDATE</a>`;
+        for (const prop in category) {
+            const td = document.createElement('td');
+            td.append(document.createTextNode(category[prop]));
+            tr.append(td);
+        }
+        tr.append(tdDelete);
+        tr.append(tdUpdate);
+        categoriesTable.append(tr);
+    }
+
+    async function deleteCategory(id) {
+        const csrfToken = document.getElementById('_csrf').content;
+        console.log("Token = " + csrfToken);
+
+        const csrfHeader = document.getElementById('_csrf_header').content;
+
+        const response = await fetch(`${baseURI}/categories/${id}`, {
+            method: 'DELETE',
+            headers: {
+                [csrfHeader]: csrfToken
+            }
+        });
+        console.log("**********" + response.status);
+        if (response.status === 204) {
+            const row = categoriesTable.querySelector(`[data-category-id="${id}"]`);
+            if (row) {
+                row.remove();
+            }
+        } else {
+            alert('Error: ' + response.status);
+            try {
+                const json = await response.json();
+                console.error(json);
+            } catch (e) {
+                console.error("Invalid JSON response from server");
+            }
+        }
+    }
+
+    function addAuthor(author) {
+        const tr = document.createElement('tr');
+        tr.dataset.authorId = author.id; //идентификатор строки в таблице Author
+        const tdDelete = document.createElement('td');
+        tdDelete.innerHTML = `<a class="delete" href="#" onclick="deleteAuthor(${author.id})">DELETE</a>`;
+        const tdUpdate = document.createElement('td');
+        tdUpdate.innerHTML = `<a class="update" href='/updateAuthor/${author.id}'>UPDATE</a>`;
+        for (const prop in author) {
+            const td = document.createElement('td');
+            if (prop === 'imagePath') {
+                const tdImage = document.createElement('td');
+                const imgLink = document.createElement('a');
+                imgLink.href = imagesBaseURL + author.imagePath + '_large.jpg';
+                const img = document.createElement('img');
+                img.src = imagesBaseURL + author.imagePath + '_small.jpg';
+                img.alt = '';
+                img.onclick = function () {
+                    this.src = this.src.replace('_small.jpg', '.jpg');
+                }
+                imgLink.append(img);
+                tdImage.append(imgLink);
+                td.append(tdImage);
+            } else {
+                td.append(document.createTextNode(author[prop]));
+            }
+            tr.append(td);
+            tr.append(tdDelete);
+            tr.append(tdUpdate);
+        }
+        authorsTable.append(tr);
+    }
+
+    async function deleteAuthor(id) {
+        const csrfToken = document.getElementById('_csrf').content;
+        console.log("Token = " + csrfToken);
+
+        const csrfHeader = document.getElementById('_csrf_header').content;
+
+        const response = await fetch(`${baseURI}/authors/${id}`, {
+            method: 'DELETE',
+            headers: {
+                [csrfHeader]: csrfToken
+            }
+        });
+        console.log("**********" + response.status);
+        if (response.status === 200) {
+            const row = authorsTable.querySelector(`[data-author-id="${id}"]`);
+            if (row) {
+                row.remove();
+            }
+        } else {
+            alert('Error: ' + response.status);
+            console.error(await response.json());
+        }
+    }
+
+
+    function addAuction(auction) {
+        console.log("-----");
+        console.log(auction);
+
+        const existingRow = document.querySelector(`tr[data-auction-id='${auction.id}']`);//идентификатор проверяет, существует ли уже Аукцион в таблице!
+        if (existingRow) {
+            // если Аукцион уже существует, обновляю ячейку, в которой отображается информация об участниках Aукциона
+            const existingCell = existingRow.querySelector("td.auctionParticipants");
+            const newUserName = auction.auctionParticipants[auction.auctionParticipants.length - 1].username;
+            let existingUserNames = existingCell.textContent;
+            if (existingUserNames) {
+                existingUserNames = existingUserNames.split(',').map(name => name.trim());
+                // Разделяю существующие имена пользователей запятыми и обрезаю все пробелы!
+                if (existingUserNames.includes(newUserName)) {
+                    // Пользователь уже существует, повторно обновлять ячейку не нужно!
+                    return;
+                }
+                existingCell.textContent += `, ${newUserName}`;
+                //если нет, то к новому имени пользователя добавляется запятая и пробел перед ним
+            } else {
+                existingCell.textContent = newUserName;
+                //Если существующая ячейка не содержит имен пользователей, она просто устанавливает для textContent ячейки новое имя пользователя!
+            }
+        }
+
+        const tr = document.createElement('tr');
+        tr.dataset.auctionId = auction.id; //идентификатор строки в таблице Auction для updateAuction
+        const tdDelete = document.createElement('td');
+        tdDelete.innerHTML = `<a class="delete" href="#" onclick="deleteAuction(${auction.id})">DELETE</a>`;
+        const tdUpdate = document.createElement('td');
+        tdUpdate.innerHTML = `<a class="update" href='/updateAuction/${auction.id}'>UPDATE</a>`;
+        const tdAllBets = document.createElement('td');
+        tdAllBets.innerHTML = `<a style="color: blue" href='/allBets/${auction.id}'>All BETS!</a>`;
+        for (const prop in auction) {
+            const td = document.createElement('td');  //@ManyToMany
+            if (prop === 'auctionParticipants') {
+                const usersNames = auction['auctionParticipants'].map(user => user['username']).join(',');
+                td.classList.add('auctionParticipants');
+                td.append(document.createTextNode(usersNames));
+            }
+            if (prop !== 'auctionParticipants') {
+                td.append(document.createTextNode(auction[prop]));
+            }
+            tr.append(td);
+        }
+        tr.append(tdDelete);
+        tr.append(tdUpdate);
+        tr.append(tdAllBets);
+        auctionsTable.append(tr);
+    }
+
+
+    async function deleteAuction(id) {
+        const csrfToken = document.getElementById('_csrf').content;
+        console.log("Token = " + csrfToken);
+
+        const csrfHeader = document.getElementById('_csrf_header').content;
+
+        const response = await fetch(`${baseURI}/auctions/${id}`, {
+            method: 'DELETE',
+            headers: {
+                [csrfHeader]: csrfToken
+            }
+        });
+        console.log("**********" + response.status);
+        if (response.status === 200) {
+            const row = auctionsTable.querySelector(`[data-auction-id="${id}"]`);
+            if (row) {
+                row.remove();
+            }
+        } else {
+            alert('Error: ' + response.status);
+            console.error(await response.json());
+        }
+    }
+
+    function fillTablePaintings(paintings) {
+        paintingsTable.innerHTML = '';
+        paintings.forEach(painting => {
+            addPainting(painting);
+        });
+    }
+
+    function fillTableCategories(categories) {
+        categoriesTable.innerHTML = '';
+        categories.forEach(category => {
+            addCategory(category);
+        });
+    }
+
+    function fillTableAuthors(authors) {
+        authorsTable.innerHTML = '';
+        authors.forEach(author => {
+            addAuthor(author);
+        });
+    }
+
+    function fillTableAuctions(auctions) {
+        auctionsTable.innerHTML = '';
+        auctions.forEach(auction => {
+            addAuction(auction);
+        });
+    }
+
+    function fillCategories(categories) {
+        const categorySelect = document.getElementById('categories');
+        categories.forEach(category => {
+            const option = document.createElement('option');
+            option.value = category.id;
+            option.append(document.createTextNode(category.name));
+            categorySelect.append(option);
+        });
+    }
+
+    function fillAuthors(authors) {
+        const authorSelect = document.getElementById('authors');
+        authors.forEach(author => {
+            const option = document.createElement('option');
+            option.value = author.id;
+            option.append(document.createTextNode(author.pseudonym));
+            authorSelect.append(option);
+        });
+    }
+
+    function fillAuctions(auctions) {
+        const auctionSelect = document.getElementById('auctions');
+        auctions.forEach(auction => {
+            const option = document.createElement('option');
+            option.value = auction.id;
+            option.append(document.createTextNode(auction.titleAuction));
+            auctionSelect.append(option);
+        });
+    }
+
+    async function loadPaintings() {
+        const response = await fetch(`${baseURI}/paintings`, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json'
+            }
+        });
+        const paintings = await response.json();
+        console.log(paintings);
+        fillTablePaintings(paintings);
+    }
+
+    async function loadCategories() {
+        const response = await fetch(`${baseURI}/categories`, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json'
+            }
+        });
+        const categories = await response.json();
+        console.log(categories);
+        fillTableCategories(categories)
+        fillCategories(categories);
+    }
+
+    async function loadAuthors() {
+        const response = await fetch(`${baseURI}/authors`, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json'
+            }
+        });
+        const authors = await response.json();
+        console.log(authors);
+        fillTableAuthors(authors)
+        fillAuthors(authors);
+    }
+
+    async function loadAuctions() {
+        const response = await fetch(`${baseURI}/auctions`, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json'
+            }
+        });
+        const auctions = await response.json();
+        console.log(auctions);
+        fillTableAuctions(auctions)
+        fillAuctions(auctions);
+    }
+
+    window.addEventListener('load', loadPaintings);
+    window.addEventListener('load', loadCategories);
+    window.addEventListener('load', loadAuthors);
+    window.addEventListener('load', loadAuctions);
+
+
+    // async function savePainting() {
+    //     const titleInput = document.getElementById('title');
+    //     const publishedInput = document.getElementById('published');
+    //     const imagePathInput = document.getElementById('imagePath');
+    //     const sizeInput = document.getElementById('size');
+    //     const materialInput = document.getElementById('material');
+    //     const descriptionInput = document.getElementById('description');
+    //     const priceInput = document.getElementById('price');
+    //     const soldInput = document.getElementById('sold');
+    //     const authorsSelect = document.getElementById('authors');
+    //     const categoriesSelect = document.getElementById('categories');
+    //     const auctionsSelect = document.getElementById('auctions');
+    //
+    //     const painting = {
+    //         title: titleInput.value,
+    //         published: publishedInput.value,
+    //         imagePath: imagePathInput.value,
+    //         size: sizeInput.value,
+    //         material: materialInput.value,
+    //         description: descriptionInput.value,
+    //         price: priceInput.value,
+    //         sold: soldInput.checked, // "on" - true, "off" - false
+    //         authorId: authorsSelect.value,
+    //         categoryId: categoriesSelect.value,
+    //         auctionId: auctionsSelect.value
+    //     };
+    //     const csrfToken = document.getElementById('_csrf').content;
+    //     console.log("Token = " + csrfToken);
+    //     const csrfHeader = document.getElementById('_csrf_header').content;
+    //     const response = await fetch(`${baseURI}/paintings`, {
+    //         method: 'POST',
+    //         headers: {
+    //             'Content-Type': 'application/json',
+    //             [csrfHeader]: csrfToken
+    //         },
+    //         body: JSON.stringify(painting)
+    //     });
+    //     console.log("**********" + response.status);
+    //     if (response.status === 201) {
+    //         const loc = response.headers.get('location');
+    //         const resp = await fetch(`http://localhost:8080${loc}`)
+    //         addPainting(await resp.json())
+    //     } else {
+    //         alert('Error: ' + response.status);
+    //     }
+    // }
+
+
+    // async function uploadImage() {
+    //     const fileInput = document.getElementById('imageFile');
+    //     const file = fileInput.files[0];
+    //     const formData = new FormData();
+    //     formData.append('file', file);
+    //
+    //     const endpoint = 'https://auction6.p.rapidapi.com/';
+    //     const apiKey = 'ec624437f5msh0ed8e9128c267c3p197cdejsnb0d127b4f5df';
+    //     const host = 'auction6.p.rapidapi.com/';
+    //
+    //     const response = await fetch(endpoint, {
+    //         method: 'POST',
+    //         headers: {
+    //             'X-RapidAPI-Key': apiKey,
+    //             'X-RapidAPI-Host': host
+    //         },
+    //         body: formData
+    //     });
+    //
+    //     if (response.ok) {
+    //         const data = await response.json();
+    //         const imageUrl = data.url;
+    //         const imageInput = document.getElementById('imageFile');
+    //         imageInput.value = imageUrl;
+    //         alert('Image uploaded successfully!');
+    //     } else {
+    //         alert('Error uploading image');
+    //     }
+    // }
+
+    // async function uploadImage() {
+    //     const fileInput = document.getElementById('imageFile');
+    //     const file = fileInput.files[0];
+    //     const formData = new FormData();
+    //     formData.append('file', file);
+    //
+    //     const endpoint = 'https://upload-image-and-return-url-by-thichthicodeteam.p.rapidapi.com/api/upload-image';
+    //     const apiKey = '2cfeea843cmsh57136774e191574p1bdfcdjsnea2b49e851b9';
+    //     const host = 'upload-image-and-return-url-by-thichthicodeteam.p.rapidapi.com/';
+    //
+    //     const response = await fetch(endpoint, {
+    //         method: 'POST',
+    //         headers: {
+    //             'X-RapidAPI-Key': apiKey,
+    //             'X-RapidAPI-Host': host
+    //         },
+    //         body: formData
+    //     });
+    //
+    //     if (response.ok) {
+    //         const data = await response.json();
+    //         const imageLink = document.getElementById('imageLink');
+    //         imageLink.value = data.link;
+    //         alert('Image uploaded successfully!');
+    //     } else {
+    //         alert('Error uploading image');
+    //     }
+    // }
+
+    async function savePainting() {
+        const titleInput = document.getElementById('title');
+        const publishedInput = document.getElementById('published');
+        const imageFileInput = document.getElementById('imageFile');
+        const sizeInput = document.getElementById('size');
+        const materialInput = document.getElementById('material');
+        const descriptionInput = document.getElementById('description');
+        const priceInput = document.getElementById('price');
+        const soldInput = document.getElementById('sold');
+        const authorsSelect = document.getElementById('authors');
+        const categoriesSelect = document.getElementById('categories');
+        const auctionsSelect = document.getElementById('auctions');
+
+        const painting = {
+            title: titleInput.value,
+            published: publishedInput.value,
+            imageLink: "",
+            size: sizeInput.value,
+            material: materialInput.value,
+            description: descriptionInput.value,
+            price: priceInput.value,
+            sold: soldInput.checked, // "on" - true, "off" - false
+            authorId: authorsSelect.value,
+            categoryId: categoriesSelect.value,
+            auctionId: auctionsSelect.value
+        };
+
+        const paintingJsonStr = JSON.stringify(painting);
+        const paintingBlobDTO = new Blob([paintingJsonStr], {
+            type: 'application/json'
+        });
+
+        const formData = new FormData();
+      
+        formData.append('file', imageFileInput.files[0]);
+        formData.append('paintingDTO', paintingBlobDTO);
+  
+
+        const csrfToken = document.getElementById('_csrf').content;
+        const csrfHeader = document.getElementById('_csrf_header').content;
+
+       const response = await fetch(`${baseURI}/paintings/create`, {
+           method: 'POST',
+           headers: {
+               [csrfHeader]: csrfToken
+           },
+           body: formData
+       });
+
+        if (response.status === 201) {
+            const loc = response.headers.get('location');
+            const resp = await fetch(`http://localhost:8080${loc}`)
+            addPainting(await resp.json())
+        } else {
+            alert('Error: ' + response.status);
+        }
+    }
+
+
+    async function saveCategory() {
+        const categoryNameInput = document.getElementById('categoryName');
+        const category = {
+            name: categoryNameInput.value
+        };
+        const csrfToken = document.getElementById('_csrf').content;
+        console.log("Token = " + csrfToken);
+        const csrfHeader = document.getElementById('_csrf_header').content;
+        const response = await fetch(`${baseURI}/categories`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                [csrfHeader]: csrfToken
+            },
+            body: JSON.stringify(category)
+        });
+        console.log("Category!!!!!" + response.status);
+        if (response.status === 201) {
+            const loc = response.headers.get('location');
+            const resp = await fetch(`http://localhost:8080${loc}`)
+            addCategory(await resp.json())
+        } else {
+            alert('Error: ' + response.status);
+        }
+    }
+
+    async function saveAuthor() {
+        const authorPseudonymInput = document.getElementById('pseudonym');
+        const authorFirstNameInput = document.getElementById('firstName');
+        const authorSurnameInput = document.getElementById('surname');
+        const authorBirthDateInput = document.getElementById('birthDate');
+        const authorAwardsInput = document.getElementById('awards');
+        const authorImagePathInput = document.getElementById('imagePathAuthor');
+        const author = {
+            pseudonym: authorPseudonymInput.value,
+            firstName: authorFirstNameInput.value,
+            surname: authorSurnameInput.value,
+            birthDate: authorBirthDateInput.value,
+            awards: authorAwardsInput.value,
+            imagePath: authorImagePathInput.value
+        };
+        const csrfToken = document.getElementById('_csrf').content;
+        const csrfHeader = document.getElementById('_csrf_header').content;
+        const response = await fetch(`${baseURI}/authors`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                [csrfHeader]: csrfToken
+            },
+            body: JSON.stringify(author)
+        });
+        console.log(response.status);
+        if (response.status === 201) {
+            const loc = response.headers.get('location');
+            const resp = await fetch(`http://localhost:8080${loc}`)
+            addAuthor(await resp.json())
+        } else {
+            alert('Error: ' + response.status);
+        }
+    }
+
+    async function saveAuction() {
+        const titleAuctionInput = document.getElementById('titleAuction');
+        const startDateInput = document.getElementById('startDate');
+        const endDateInput = document.getElementById('endDate');
+        const startingPriceInput = document.getElementById('startingPrice');
+        const currentBetInput = document.getElementById('currentBet');
+        const activeInput = document.getElementById('active');
+        const winnerInput = document.getElementById('winner');
+        const auction = {
+            titleAuction: titleAuctionInput.value,
+            startDate: startDateInput.value,
+            endDate: endDateInput.value,
+            startingPrice: startingPriceInput.value,
+            currentBet: currentBetInput.value,
+            active: activeInput.checked, // "on" - true "off" - false
+            winner: winnerInput.value
+        };
+        const csrfToken = document.getElementById('_csrf').content;
+        const csrfHeader = document.getElementById('_csrf_header').content;
+        const response = await fetch(`${baseURI}/auctions`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                [csrfHeader]: csrfToken
+            },
+            body: JSON.stringify(auction)
+        });
+        console.log(response.status);
+        if (response.status === 201) {
+            const loc = response.headers.get('location');
+            const resp = await fetch(`http://localhost:8080${loc}`)
+            addAuction(await resp.json())
+        } else if (response.status === 400) {
+            const errorResponse = await response.json();
+            if (errorResponse.message === 'Auction has ended!') {
+                alert('Auction has ended!');
+                location.reload();
+            } else {
+                alert('Error: ' + response.status);
+            }
+        } else {
+            alert('Error: ' + response.status);
+        }
+    }
+
+    savePaintingButton.addEventListener('click', savePainting);
+    saveCategoryButton.addEventListener('click', saveCategory);
+    saveAuthorButton.addEventListener('click', saveAuthor);
+    saveAuctionButton.addEventListener('click', saveAuction);
+</script>
+</body>
+</html>

@@ -1,0 +1,41 @@
+html {
+    background-image: url("/images/participateAuction.jpg");
+    background-size: 100% 100%;
+    background-position: center;
+    font-family: "Arial Black", sans-serif;
+    color: rebeccapurple;
+}
+table {
+    border-collapse: collapse;
+}
+
+table, td, th {
+    border: 1px solid black;
+}
+
+td, th {
+    margin: 8px;
+    padding: 10px;
+}
+
+#current_date_time_block {
+    color: saddlebrown;
+    border-radius: 10px;
+    font-size: 14pt;
+    border: 2px solid rosybrown;
+    background: burlywood;
+    padding: 5px 20px;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+input[type="submit"] {
+    margin: 10px;
+    padding: 10px;
+    background-color: rosybrown;
+    color: lightgoldenrodyellow;
+    font-weight: bold;
+    width: 80px;
+    height: 40px;
+    border-radius: 10px;
+}

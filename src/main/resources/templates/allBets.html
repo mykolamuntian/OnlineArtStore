@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link th:href="@{/css/allBets.css}" rel="stylesheet"/>
+    <meta name="csrf-token" id="_csrf" th:content="${_csrf.token}"/>
+    <meta name="csrf-header" id="_csrf_header" th:content="${_csrf.headerName}"/>
+</head>
+<body>
+<nav>
+    <menu>
+        <li><a th:href="@{/}">General page</a></li>
+        <li sec:authorize="isAuthenticated()">
+            <a th:href="@{/privatePage}">Private page</a></li>
+        <li sec:authorize="hasRole('ADMIN')">
+            <a th:href="@{/mainAdminPage}">Admin page</a></li>
+        <li sec:authorize="isAnonymous()">
+            <a th:href="@{/singup}">Sign Up</a></li>
+        <li sec:authorize="isAnonymous()">
+            <a th:href="@{/login}">Login</a></li>
+        <li sec:authorize="isAuthenticated()">
+            Welcome <span sec:authentication="name"></span>!
+        </li>
+        <li sec:authorize="isAuthenticated()">
+            <a th:href="@{/logout}">Logout</a></li>
+    </menu>
+</nav>
+<h1 style="color: darkorchid">This Auction:</h1>
+<h2>Welcome <span sec:authentication="name"></span>!</h2>
+<table>
+    <thead>
+    <tr>
+        <th>Title Auction:</th>
+        <th>Start Date:</th>
+        <th>End Date:</th>
+        <th>Starting Price:</th>
+        <th>Current Bet:</th>
+        <th>Active:</th>
+        <th>Participants:</th>
+        <th>Winner:</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td th:text="${auction.titleAuction}"></td>
+        <td th:text="${auction.startDate}"></td>
+        <td th:text="${auction.endDate}"></td>
+        <td th:text="${auction.startingPrice}"></td>
+        <td th:text="${auction.currentBet}"></td>
+        <td th:text="${auction.active}"></td>
+        <td>
+            <ul th:each="user: ${auction.auctionParticipants}" multiple="multiple" th:size="${auction.auctionParticipants.size()}">
+                <li th:text="${user.username + ', '}"></li>
+            </ul>
+        </td>
+        <td th:text="${auction.winner}"></td>
+    </tr>
+    </tbody>
+</table>
+
+<h2>BETS table:</h2>
+<table>
+    <thead>
+    <tr>
+        <th>Created date:</th>
+        <th>Amount money:</th>
+        <th>Active:</th>
+        <th>Auction:</th>
+        <th>User:</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="bet:${bets}">
+        <td th:text="${bet.createdDate}"></td>
+        <td th:text="${bet.amountMoney}"></td>
+        <td th:text="${bet.active}"></td>
+        <td th:text="${bet.auction.titleAuction}"></td>
+        <td th:text="${bet.user.username}"></td>
+    </tr>
+    </tbody>
+</table>
+<div id="current_date_time_block"></div>
+<script>
+    const createdDate = document.getElementById('current_date_time_block');
+    const baseURI = 'http://localhost:8080/api/v2';
+
+    /* функция добавления ведущих нулей */
+    /* (если число меньше десяти, перед числом добавляем ноль) */
+    function zero_first_format(value) {
+        if (value < 10) {
+            value = '0' + value;
+        }
+        return value;
+    }
+
+    /* функция получения текущей даты и времени */
+    function date_time() {
+        let current_datetime = new Date();
+        let day = zero_first_format(current_datetime.getDate());
+        let month = zero_first_format(current_datetime.getMonth() + 1);
+        let year = current_datetime.getFullYear();
+        let hours = zero_first_format(current_datetime.getHours());
+        let minutes = zero_first_format(current_datetime.getMinutes());
+        let seconds = zero_first_format(current_datetime.getSeconds());
+        return day + "." + month + "." + year + " " + hours + ":" + minutes + ":" + seconds;
+    }
+
+    /* каждую секунду получаем текущую дату и время */
+    /* и вставляем значение в блок с id "current_date_time_block2" */
+    setInterval(function () {
+        createdDate.innerHTML = date_time();
+    }, 1000);
+</script>
+</body>
+</html>

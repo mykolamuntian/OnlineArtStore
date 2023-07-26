@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Online Art Store</title>
+    <link th:href="@{/css/participateAuction.css}" rel="stylesheet"/>
+    <meta name="csrf-token" id="_csrf" th:content="${_csrf.token}"/>
+    <meta name="csrf-header" id="_csrf_header" th:content="${_csrf.headerName}"/>
+    <meta name="auctionId" id="auctionId" th:content="${auctionId}"/>
+</head>
+<body>
+<nav>
+    <menu>
+        <li><a th:href="@{/}">General page</a></li>
+        <li sec:authorize="isAuthenticated()">
+            <a th:href="@{/privatePage}">Private page</a></li>
+        <li sec:authorize="hasRole('ADMIN')">
+            <a th:href="@{/mainAdminPage}">Admin page</a></li>
+        <li sec:authorize="isAnonymous()">
+            <a th:href="@{/singup}">Sign Up</a></li>
+        <li sec:authorize="isAnonymous()">
+            <a th:href="@{/login}">Login</a></li>
+        <li sec:authorize="isAuthenticated()">
+            Welcome <span sec:authentication="name"></span>!
+        </li>
+        <li sec:authorize="isAuthenticated()">
+            <a th:href="@{/logout}">Logout</a></li>
+    </menu>
+</nav>
+<h2 style="color: saddlebrown">Welcome <span sec:authentication="name"></span>!</h2>
+<h2 style="color: saddlebrown">You are participating in this Auction.</h2>
+<table>
+    <thead>
+    <tr>
+        <th>Title Auction:</th>
+        <th>Start Date:</th>
+        <th>End Date:</th>
+        <th>Starting Price:</th>
+        <th>Current Bet:</th>
+        <th>Active:</th>
+        <th>Winner:</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td th:text="${auction.titleAuction}"></td>
+        <td th:text="${auction.startDate}"></td>
+        <td th:text="${auction.endDate}"></td>
+        <td th:text="${auction.startingPrice}"></td>
+        <td th:text="${auction.currentBet}"></td>
+        <td th:text="${auction.active}"></td>
+        <td th:text="${auction.winner}"></td>
+    </tr>
+    </tbody>
+</table>
+<h2>Place Your bet:</h2>
+<div>
+    <div>
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+    </div>
+    <div>
+        <label for="amountMoney">Amount money:</label>
+        <input type="number" id="amountMoney" name="amountMoney" min="1000" step="500" required="required"/>
+    </div>
+    <div>
+        <input type="submit" id="saveBet" value="Press"/>
+    </div>
+</div>
+
+<h2>BETS table:</h2>
+<table>
+    <thead>
+    <tr>
+        <th>Id</th>
+        <th>Created Date</th>
+        <th>Amount Money</th>
+        <th>Active</th>
+        <th>Auction</th>
+        <th>User</th>
+    </tr>
+    </thead>
+    <tbody id="Bets-table">
+    </tbody>
+</table>
+<div id="current_date_time_block"></div>
+<script>
+    const createdDate = document.getElementById('current_date_time_block');
+    const betsTable = document.getElementById('Bets-table');
+    const saveBetButton = document.getElementById('saveBet');
+    const baseURI = 'http://localhost:8080/api/v2';
+
+    /* функция добавления ведущих нулей */
+    /* (если число меньше десяти, перед числом добавляем ноль) */
+    function zero_first_format(value) {
+        if (value < 10) {
+            value = '0' + value;
+        }
+        return value;
+    }
+
+    /* функция получения текущей даты и времени */
+    function date_time() {
+        let current_datetime = new Date();
+        let day = zero_first_format(current_datetime.getDate());
+        let month = zero_first_format(current_datetime.getMonth() + 1);
+        let year = current_datetime.getFullYear();
+        let hours = zero_first_format(current_datetime.getHours());
+        let minutes = zero_first_format(current_datetime.getMinutes());
+        let seconds = zero_first_format(current_datetime.getSeconds());
+        return day + "." + month + "." + year + " " + hours + ":" + minutes + ":" + seconds;
+    }
+
+    /* каждую секунду получаем текущую дату и время */
+    /* и вставляем значение в блок с id "current_date_time_block2" */
+    setInterval(function () {
+        createdDate.innerHTML = date_time();
+    }, 1000);
+
+
+    function addBet(bet) {
+        const tr = document.createElement('tr');
+        const tdDelete = document.createElement('td');
+        for (const prop in bet) {
+            const td = document.createElement('td');
+            if (prop === 'auction') {
+                td.append(document.createTextNode(bet[prop].titleAuction));
+            }
+            if (prop === 'user') {
+                td.append(document.createTextNode(bet[prop].username));
+            }
+            if (prop !== 'auction' && prop !== 'user') {
+                td.append(document.createTextNode(bet[prop]));
+            }
+            tr.append(td);
+        }
+        betsTable.append(tr);
+    }
+
+    function fillTableBets(bets) {
+        betsTable.innerHTML = '';
+        bets.forEach(bet => {
+            addBet(bet);
+        });
+    }
+
+    async function loadBets() {
+        const response = await fetch(`${baseURI}${location.pathname}/bets`, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json'
+            }
+        });
+        const bets = await response.json();
+        console.log(bets);
+        fillTableBets(bets);
+    }
+
+    window.addEventListener('load', loadBets);
+
+    // async function saveBet() {
+    //     const amountMoneyInput = document.getElementById('amountMoney');
+    //     const currentBetElement = document.getElementById('currentBet');
+    //     const currentBet = currentBetElement ? parseFloat(currentBetElement.innerText) : 0;
+    //     const minimumBet = currentBet + 500; // Минимальная ставка больше текущей ставки на 500 UAH!
+    //
+    //     if (parseFloat(amountMoneyInput.value) < minimumBet) {
+    //         alert('Your bid cannot be lower than the current bid by at least 500 UAH');
+    //         return;
+    //     }
+    //
+    //     const bet = {
+    //         amountMoney: amountMoneyInput.value
+    //     };
+    //
+    //     const csrfToken = document.getElementById('_csrf').content;
+    //     console.log("Token = " + csrfToken);
+    //     const csrfHeader = document.getElementById('_csrf_header').content;
+    //     const response = await fetch(`${baseURI}${location.pathname}`, {
+    //         method: 'POST',
+    //         headers: {
+    //             'Content-Type': 'application/json',
+    //             [csrfHeader]: csrfToken
+    //         },
+    //         body: JSON.stringify(bet)
+    //     });
+    //     console.log("**********" + response.status);
+    //
+    //     if (response.status === 201) {
+    //         const loc = response.headers.get('location');
+    //         const resp = await fetch(`http://localhost:8080${loc}`)
+    //         addBet(await resp.json())
+    //         alert('Bet successfully created!');
+    //         location.reload(); // обновить страницу!!!!
+    //
+    //     } else if (response.status === 400) {
+    //         const errorMessage = await response.text();
+    //         if (errorMessage === "Auction has ended!") {
+    //             alert("Your bid cannot be accepted because Auction has ended!");
+    //             location.reload(); // обновить страницу!!!!
+    //         } else if (errorMessage === "The amount of the bet must be at least 500 UAH higher than the current bet!") {
+    //             alert(errorMessage);
+    //         } else {
+    //             alert('Error: ' + errorMessage);
+    //         }
+    //     }
+    // }
+    //
+    //
+    // const source = new EventSource(`${baseURI}${location.pathname}/sse`);
+    // const amountMoneyInput = document.getElementById('amountMoney');
+    //
+    // const auction = {
+    //     id: 1,
+    //     titleAuction: 'New Year Auction!',
+    //     startDate: new Date('2023-03-23T09:00:00Z'),
+    //     endDate: new Date('2023-03-23T20:47:00Z'),
+    //     startingPrice: 3000,
+    //     currentBid: 3500,
+    //     active: true,
+    //     winner: 'Who is the winner?'
+    // };
+    //
+    //
+    // source.addEventListener('auctionUpdate', function(event) {
+    //     const auctionStatus = JSON.parse(event.data);
+    //     console.log(auctionStatus);
+    //     if (auctionStatus.ended) {
+    //         saveBetButton.disabled = true;
+    //         amountMoneyInput.disabled = true;
+    //         auction.active = false;
+    //         console.log(auctionStatus);
+    //         alert("The auction has ended. You can no longer submit bets!!!");
+    //     }
+    // });
+    //
+    // saveBetButton.addEventListener('click', saveBet);
+
+    const amountMoneyInput = document.getElementById('amountMoney');
+    const auction = {
+        id: 1,
+        titleAuction: 'New Year Auction!',
+        startDate: new Date('2023-03-23T09:00:00Z'),
+        endDate: new Date('2023-03-23T20:47:00Z'),
+        startingPrice: 3000,
+        currentBid: 3500,
+        active: true,
+        winner: 'Who is the winner?'
+    };
+
+    function disableBetting() { //запретить ставки!
+        saveBetButton.disabled = true;
+        amountMoneyInput.disabled = true;
+        auction.active = false;
+        alert("The auction has ended. You can no longer submit bets!!!");
+    }
+
+    function handleAuctionUpdate(event) {
+        const auctionStatus = JSON.parse(event.data);
+        console.log(auctionStatus);
+        if (auctionStatus.ended) {
+            disableBetting();
+        } else {
+            auction.currentBid = auctionStatus.currentBid;
+        }
+    }
+
+    function checkAuctionStatus() {
+        if (!auction.active) {
+            alert("The auction has ended. You can no longer submit bets!!!");
+            return false;
+        }
+
+        const currentBetElement = document.getElementById('currentBet');
+        const currentBet = currentBetElement ? parseFloat(currentBetElement.innerText) : 0;
+        const minimumBet = currentBet + 500; // Минимальная ставка больше текущей ставки на 500 UAH!
+        if (parseFloat(amountMoneyInput.value) < minimumBet) {
+            alert('Your bid cannot be lower than the current bid by at least 500 UAH');
+            return false;
+        }
+        return true;
+    }
+
+    async function saveBet() {
+        if (!checkAuctionStatus()) {
+            return;
+        }
+
+        const bet = {
+            amountMoney: amountMoneyInput.value
+        };
+
+        const csrfToken = document.getElementById('_csrf').content;
+        console.log("Token = " + csrfToken);
+        const csrfHeader = document.getElementById('_csrf_header').content;
+
+        try {
+            const response = await fetch(`${baseURI}${location.pathname}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    [csrfHeader]: csrfToken
+                },
+                body: JSON.stringify(bet)
+            });
+            console.log("**********" + response.status);
+
+            if (response.status === 201) {
+                const loc = response.headers.get('location');
+                const resp = await fetch(`http://localhost:8080${loc}`)
+                addBet(await resp.json())
+                alert('Bet successfully created!');
+                location.reload(); // обновить страницу!!!!
+
+            } else if (response.status === 400) {
+                const errorMessage = await response.text();
+                if (errorMessage === "Auction has ended!") {
+                    disableBetting();
+                } else if (errorMessage === "The amount of the bet must be at least 500 UAH higher than the current bet!") {
+                    alert(errorMessage);
+                } else {
+                    alert('Error: ' + errorMessage);
+                }
+            }
+        } catch (err) {
+            console.error(err);
+            alert('Error: ' + err.message);
+        }
+    }
+
+    const source = new EventSource(`${baseURI}${location.pathname}/sse`);
+    source.addEventListener('auctionUpdate', handleAuctionUpdate);
+
+
+    saveBetButton.addEventListener('click', saveBet);
+
+</script>
+</body>
+</html>

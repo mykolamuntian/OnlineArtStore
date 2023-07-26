@@ -1,0 +1,27 @@
+html {
+    background-image: url("/images/privatePage.jpg");
+    background-size: cover;
+    background-position: center;
+    font-family: "Arial Black", sans-serif;
+    color: rebeccapurple;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+table, td, th {
+    border: 1px solid black;
+}
+
+td, th {
+    margin: 8px;
+    padding: 2px;
+}
+
+.participate-link {
+    color: blue;
+}
+.part {
+    color: blue;
+}
