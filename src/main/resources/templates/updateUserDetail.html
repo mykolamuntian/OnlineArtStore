@@ -49,7 +49,8 @@
     const saveUserDetailButton = document.getElementById('saveUserDetail');
     const userDetailIdMeta = document.getElementById("userDetailId");
     const userDetailId = userDetailIdMeta.content;
-    const baseURI = `http://localhost:8080/adminPageUsers/api/v3`;
+    const currentHost = window.location.host;
+    const baseURI = `http://${currentHost}/adminPageUsers/api/v3`;
 
     async function saveUserDetail() {
         const firstNameInput = document.getElementById('firstName');
@@ -80,7 +81,8 @@
         console.log(response.status);
         if (response.status === 201) {
             const loc = response.headers.get('location');
-            const resp = await fetch(`http://localhost:8080${loc}`)
+            const resp = await fetch(`http://${currentHost}${loc}`)
+            addUserDetail(userDetail)
             if(resp.status === 200){
                 let userDetail = await resp.json();
                 console.log(userDetail);

@@ -87,7 +87,8 @@
     const createdDate = document.getElementById('current_date_time_block');
     const betsTable = document.getElementById('Bets-table');
     const saveBetButton = document.getElementById('saveBet');
-    const baseURI = 'http://localhost:8080/api/v2';
+    const currentHost = window.location.host;
+    const baseURI = `http://${currentHost}/api/v2`;
 
     /* функция добавления ведущих нулей */
     /* (если число меньше десяти, перед числом добавляем ноль) */
@@ -187,7 +188,7 @@
     //
     //     if (response.status === 201) {
     //         const loc = response.headers.get('location');
-    //         const resp = await fetch(`http://localhost:8080${loc}`)
+    //         const resp = await fetch(`http://${currentHost}${loc}`)
     //         addBet(await resp.json())
     //         alert('Bet successfully created!');
     //         location.reload(); // обновить страницу!!!!
@@ -306,7 +307,7 @@
 
             if (response.status === 201) {
                 const loc = response.headers.get('location');
-                const resp = await fetch(`http://localhost:8080${loc}`)
+                const resp = await fetch(`http://${currentHost}${loc}`)
                 addBet(await resp.json())
                 alert('Bet successfully created!');
                 location.reload(); // обновить страницу!!!!

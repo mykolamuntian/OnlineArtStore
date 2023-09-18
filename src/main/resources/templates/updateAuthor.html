@@ -35,8 +35,8 @@
         <input type="text" id="awards" name="awards" required th:value="${author.awards}">
     </div>
     <div class="frame">
-        <label for="imagePath">Author photo:</label>
-        <input type="text" id="imagePath" name="imagePath" required th:value="${author.imagePath}">
+        <label for="imageFileAuthor">File:</label>
+        <input type="file" id="imageFileAuthor" name="imageFileAuthor" required th:value="${author.imageLink}"/>
     </div>
     <div class="frame">
         <input type="submit" id="authorSave" value="Press"/>
@@ -50,7 +50,8 @@
     const saveAuthorButton = document.getElementById('authorSave');
     const authorIdMeta = document.getElementById("authorId");
     const authorId = authorIdMeta.content;
-    const baseURI = `http://localhost:8080/adminPage/api/v1`;
+    const currentHost = window.location.host;
+    const baseURI = `http://${currentHost}/adminPage/api/v1`;
 
     async function authorSave() {
         const authorPseudonymInput = document.getElementById('pseudonym');
@@ -58,31 +59,39 @@
         const authorSurnameInput = document.getElementById('surname');
         const authorBirthDateInput = document.getElementById('birthDate');
         const authorAwardsInput = document.getElementById('awards');
-        const authorImagePathInput = document.getElementById('imagePath');
+        const imageFileAuthorInput = document.getElementById('imageFileAuthor');
         const author = {
             pseudonym: authorPseudonymInput.value,
             firstName: authorFirstNameInput.value,
             surname: authorSurnameInput.value,
             birthDate: authorBirthDateInput.value,
             awards: authorAwardsInput.value,
-            imagePath: authorImagePathInput.value
+            imageLink: ""
         };
+        const authorJsonStr = JSON.stringify(author);
+        const authorBlobDTO = new Blob([authorJsonStr], {
+            type: 'application/json'
+        });
+
+        const formData = new FormData();
+
+        formData.append('file', imageFileAuthorInput.files[0]);
+        formData.append('authorDTO', authorBlobDTO);
 
         const csrfToken = document.getElementById('_csrf').content;
-        console.log("Token = " + csrfToken);
         const csrfHeader = document.getElementById('_csrf_header').content;
-        const response = await fetch(`${baseURI}/authors/${authorId}`, {
+        const response = await fetch(`${baseURI}/authors/update/${authorId}`, {
             method: 'PUT',
             headers: {
-                'Content-Type': 'application/json',
+                //Content-Type ніякий не вказувати,бо є файл і інші дані!
                 [csrfHeader]: csrfToken
             },
-            body: JSON.stringify(author)
+            body: formData
         });
         console.log("Author!!!!!" + response.status);
         if (response.status === 201) {
             const loc = response.headers.get('location');
-            const resp = await fetch(`http://localhost:8080${loc}`)
+            const resp = await fetch(`http://${currentHost}${loc}`)
             addAuthor(await resp.json())
         } else {
             alert('Error: ' + response.status);

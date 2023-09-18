@@ -82,9 +82,11 @@
     <tr th:if="${painting.auction!=null && painting.sold==false}" th:each="painting:${paintings}">
         <td th:text="${painting.title}"></td>
         <td>
-            <a th:href="@{${'/images/' + painting.imagePath + '_large.jpg'}}">
-                <img th:src="@{${'/images/' + painting.imagePath + '_small.jpg'}}" alt="" onclick="this.src=this.src.replace('_small.jpg','.jpg')" />
-            </a>
+<!--            <a th:href="@{${'/images/' + painting.imagePath + '_large.jpg'}}">-->
+<!--                <img th:src="@{${'/images/' + painting.imagePath + '_small.jpg'}}" alt="" onclick="this.src=this.src.replace('_small.jpg','.jpg')" />-->
+<!--            </a>-->
+            <img th:src="${painting.imageLink}" alt="" />
+
         </td>
         <td th:text="${painting.size}"></td>
         <td th:text="${painting.material}"></td>
@@ -116,33 +118,32 @@
         <td th:text="${author.birthDate}"></td>
         <td th:text="${author.awards}"></td>
         <td>
-            <a th:href="@{${'/images/' + author.imagePath + '_large.jpg'}}">
-                <img th:src="@{${'/images/' + author.imagePath + '_small.jpg'}}" alt="" onclick="this.src=this.src.replace('_small.jpg','.jpg')" />
-            </a>
+            <img th:src="${author.imageLink}" alt="" />
         </td>
     </tbody>
 </table>
 <script>
-    // беру все "Participate!" ссылки на странице
-    const baseURI = 'http://localhost:8080/participateAuction/';
+    // беру все "Participate!" посилання на сторінці
+    const currentHost = window.location.host;
+    const baseURI = `http://${currentHost}/participateAuction/`;
     const participateLinks = document.querySelectorAll('.participate-link');
 
     participateLinks.forEach(link => {
         link.addEventListener('click', async (event) => {
-            event.preventDefault(); // Запрещаю переход по ссылке на новую страницу!
+            event.preventDefault(); // Забороняю перехід за посиланням на нову сторінку!
 
-            // Получаю auctionId из атрибута href ссылки
+            // Отримую auctionId з атрибуту href посилання
             const auctionId = link.href.split('/').pop();
 
             try {
-                // Получаю идентификатор текущего пользователя из файла cookie или локального хранилища!
+                // Отримую ідентифікатор користувача з файлу cookie або локального сховища!
                 localStorage.setItem('userId', userId);
 
                 const csrfToken = document.getElementById('_csrf').content;
                 console.log("Token = " + csrfToken);
                 const csrfHeader = document.getElementById('_csrf_header').content;
 
-                // Отправляю POST-запрос к конечной точке participateAuction endpoint with the auctionId and userId parameters
+                // Надсилаю POST-запит до кінцевої точки participateAuction endpoint with the auctionId and userId parameters
                 const response = await fetch(`${baseURI}${auctionId}`, {
                     method: 'POST',
                     headers: {
@@ -154,9 +155,9 @@
                 console.log(auctionId);
                 console.log(userId);
                 if (response.ok) {
-                    // Перезагрузка страницу, чтобы увидеть обновленную информацию об аукционе
+                    // Перезавантажити сторінку, щоб побачити оновлену інформацію про аукціон
                     window.location.reload();
-                    // Теперь переходим по ссылке!
+                    // Тепер переходимо за посиланням!
                     window.location.href = link.href;
                 } else {
                     console.error(`Failed to participate in Auction ${auctionId}: ${response.statusText}`);

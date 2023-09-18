@@ -33,7 +33,7 @@ public class Author {
     @NonNull
     private String awards;
     @NonNull
-    private String imagePath;
+    private String imageLink;
 
     @JsonIgnore
     @OneToMany(mappedBy = "author", cascade = {CascadeType.ALL})

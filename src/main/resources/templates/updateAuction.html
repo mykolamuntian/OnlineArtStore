@@ -53,7 +53,8 @@
     const saveAuctionButton = document.getElementById('saveAuction');
     const auctionIdMeta = document.getElementById("auctionId");
     const auctionId = auctionIdMeta.content;
-    const baseURI = `http://localhost:8080/adminPage/api/v1`;
+    const currentHost = window.location.host;
+    const baseURI = `http://${currentHost}/adminPage/api/v1`;
 
     async function saveAuction() {
         const titleAuctionInput = document.getElementById('titleAuction');
@@ -85,7 +86,7 @@
         console.log(response.status);
         if (response.status === 201) {
             const loc = response.headers.get('location');
-            const resp = await fetch(`http://localhost:8080${loc}`)
+            const resp = await fetch(`http://${currentHost}${loc}`)
             addAuction(await resp.json())
         } else {
             alert('Error: ' + response.status);

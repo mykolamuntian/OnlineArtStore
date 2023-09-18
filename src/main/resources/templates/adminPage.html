@@ -34,7 +34,7 @@
     </menu>
 </nav>
 <h1 style="color:deeppink">Create or view a PICTURE, CATEGORY, AUTHOR, AUCTION.</h1>
-<h2 class="name">Create new Painting for auction:</h2>
+<h2 class="name">Create new Painting for Auction:</h2>
 <div class="frame">
     <div>
         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
@@ -88,60 +88,6 @@
     </div>
 </div>
 
-<!--<h2 class="name">Create new Painting for auction:</h2>-->
-<!--<div class="frame">-->
-<!--    <div>-->
-<!--        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>-->
-<!--    </div>-->
-<!--    <div class="frame">-->
-<!--        <label for="title">Title:</label>-->
-<!--        <input type="text" id="title" name="title"/>-->
-<!--    </div>-->
-<!--    <div class="frame">-->
-<!--        <label for="published">Published:</label>-->
-<!--        <input type="date" id="published" name="published"/>-->
-<!--    </div>-->
-<!--    <div class="frame">-->
-<!--        <label for="imagePath">Image path:</label>-->
-<!--        <input type="text" id="imagePath" name="imagePath"/>-->
-<!--    </div>-->
-<!--    <div class="frame">-->
-<!--        <label for="size">Size:</label>-->
-<!--        <input type="text" id="size" name="size"/>-->
-<!--    </div>-->
-<!--    <div class="frame">-->
-<!--        <label for="material">Material:</label>-->
-<!--        <input type="text" id="material" name="material"/>-->
-<!--    </div>-->
-<!--    <div class="frame">-->
-<!--        <label for="description">Description:</label>-->
-<!--        <input type="text" id="description" name="description"/>-->
-<!--    </div>-->
-<!--    <div class="frame">-->
-<!--        <label for="price">Price:</label>-->
-<!--        <input type="number" id="price" name="price"/>-->
-<!--    </div>-->
-<!--    <div class="frame">-->
-<!--        <label for="sold">SOLD:</label>-->
-<!--        <input type="checkbox" id="sold" name="sold"/>-->
-<!--    </div>-->
-<!--    <div class="frame">-->
-<!--        <label for="authors">Author:</label>-->
-<!--        <select name="authors" id="authors"></select>-->
-<!--    </div>-->
-<!--    <div class="frame">-->
-<!--        <label for="categories">Category:</label>-->
-<!--        <select name="categories" id="categories"></select>-->
-<!--    </div>-->
-<!--    <div class="frame">-->
-<!--        <label for="auctions">Auction:</label>-->
-<!--        <select name="auctions" id="auctions"></select>-->
-<!--    </div>-->
-<!--    <div class="frame">-->
-<!--        <input type="submit" id="save" value="Press"/>-->
-<!--    </div>-->
-<!--</div>-->
-
 
 <h2 class="name">Create new Category:</h2>
 <div class="frame">
@@ -180,8 +126,8 @@
         <input type="text" id="awards" name="awards">
     </div>
     <div class="frame">
-        <label for="imagePathAuthor">Author photo:</label>
-        <input type="text" id="imagePathAuthor" name="imagePathAuthor">
+        <label for="imageFileAuthor">Author photo:</label>
+        <input type="file" name="imageFileAuthor" id="imageFileAuthor">
     </div>
     <div class="frame">
         <input type="submit" id="authorSave" value="Press"/>
@@ -305,11 +251,12 @@
 </table>
 
 <script>
-    const baseURI = 'http://localhost:8080/adminPage/api/v1';
+    const currentHost = window.location.host;
+    const baseURI = `http://${currentHost}/adminPage/api/v1`;
     const paintingsTable = document.getElementById('Paintings-table');
     const savePaintingButton = document.getElementById('save');
 
-    const imagesBaseURL = 'http://localhost:8080/images/';
+    const imagesBaseURL = `http://${currentHost}/images/`;
 
     const categoriesTable = document.getElementById('Categories-table');
     const saveCategoryButton = document.getElementById('categorySave');
@@ -323,44 +270,6 @@
     const csrfToken = document.getElementById('_csrf').content;
 
     const csrfHeader = document.getElementById('_csrf_header').content;
-
-    // function addPainting(painting) {
-    //     const tr = document.createElement('tr');
-    //     tr.dataset.paintingId = painting.id;
-    //     const tdDelete = document.createElement('td');
-    //     const tdUpdate = document.createElement('td');
-    //     tdDelete.innerHTML = `<a href="#" onclick="deletePainting(${painting.id})">DELETE</a>`;
-    //     tdUpdate.innerHTML = `<a href='/updatePainting/${painting.id}'>UPDATE</a>`;
-    //     for (const prop in painting) {
-    //         const td = document.createElement('td');
-    //         if (prop === 'author') {
-    //             td.append(document.createTextNode(painting[prop].pseudonym));
-    //         } else if (prop === 'category') {
-    //             td.append(document.createTextNode(painting[prop].name));
-    //         } else if (prop === 'auction') {
-    //             td.append(document.createTextNode(painting[prop].titleAuction));
-    //         } else if (prop === 'imagePath') {
-    //             const tdImage = document.createElement('td');
-    //             const imgLink = document.createElement('a');
-    //             imgLink.href = imagesBaseURL + painting.imagePath + '_large.jpg';
-    //             const img = document.createElement('img');
-    //             img.src = imagesBaseURL + painting.imagePath + '_small.jpg';
-    //             img.alt = '';
-    //             img.onclick = function () {
-    //                 this.src = this.src.replace('_small.jpg', '.jpg');
-    //             }
-    //             imgLink.append(img);
-    //             tdImage.append(imgLink);
-    //             td.append(tdImage);
-    //         } else {
-    //             td.append(document.createTextNode(painting[prop]));
-    //         }
-    //         tr.append(td);
-    //     }
-    //     tr.append(tdDelete);
-    //     tr.append(tdUpdate);
-    //     paintingsTable.append(tr);
-    // }
 
     async function addPainting(painting) {
         const tr = document.createElement('tr');
@@ -385,37 +294,11 @@
                 const imgLink = document.createElement('a');
                 imgLink.href = ''; // По замовчуванню URL порожній
                 const img = document.createElement('img');
-                img.src = painting[prop]; // По замовчуванню URL порожній
-                img.alt = 'Image from URL';
-                // img.onclick = function () {
-                //     this.src = this.src.replace('_small.jpg', '.jpg');
-                // }
-
-                // // Функція для завантаження зображення на сервер
-                // async function uploadImage() {
-                //     const formData = new FormData();
-                //     formData.append('imageFile', painting[prop]);
-
-                //     const response = await fetch(`${baseURI}/uploadImage`, {
-                //         method: 'POST',
-                //         headers: {
-                //             [csrfHeader]: csrfToken
-                //         },
-                //         body: formData
-                //     });
-
-                //     if (response.status === 200) {
-                //         const data = await response.json();
-                //         imageURL = data.imageURL;
-                //         imgLink.href = imagesBaseURL + imageURL + '_large.jpg';
-                //         img.src = imagesBaseURL + imageURL + '_small.jpg';
-                //     } else {
-                //         alert('Error uploading image: ' + response.status);
-                //     }
-                // }
-
-                // Виклик функції для завантаження зображення
-                // await uploadImage();
+                img.src = painting[prop];
+                img.alt = '';
+                img.onclick = function () {
+                    this.src = this.src.replace('_small.jpg', '.jpg');
+                }
 
                 imgLink.append(img);
                 imgURLContainer.append(imgLink);
@@ -429,7 +312,6 @@
         tr.append(tdUpdate);
         paintingsTable.append(tr);
     }
-
 
 
     async function deletePainting(id) {
@@ -458,7 +340,7 @@
 
     function addCategory(category) {
         const tr = document.createElement('tr');
-        tr.dataset.categoryId = category.id; //идентификатор строки в таблице Category
+        tr.dataset.categoryId = category.id; //ідентифікатор рядка у таблиці Category
         const tdDelete = document.createElement('td');
         const tdUpdate = document.createElement('td');
         tdDelete.innerHTML = `<a class="delete"href="#" onclick="deleteCategory(${category.id})">DELETE</a>`;
@@ -504,19 +386,19 @@
 
     function addAuthor(author) {
         const tr = document.createElement('tr');
-        tr.dataset.authorId = author.id; //идентификатор строки в таблице Author
+        tr.dataset.authorId = author.id; //ідентифікатор рядка у таблиці Author
         const tdDelete = document.createElement('td');
         tdDelete.innerHTML = `<a class="delete" href="#" onclick="deleteAuthor(${author.id})">DELETE</a>`;
         const tdUpdate = document.createElement('td');
         tdUpdate.innerHTML = `<a class="update" href='/updateAuthor/${author.id}'>UPDATE</a>`;
         for (const prop in author) {
             const td = document.createElement('td');
-            if (prop === 'imagePath') {
+            if (prop === 'imageLink') {
                 const tdImage = document.createElement('td');
                 const imgLink = document.createElement('a');
-                imgLink.href = imagesBaseURL + author.imagePath + '_large.jpg';
+                imgLink.href = imagesBaseURL + author.imageLink + '_large.jpg';
                 const img = document.createElement('img');
-                img.src = imagesBaseURL + author.imagePath + '_small.jpg';
+                img.src = author[prop];
                 img.alt = '';
                 img.onclick = function () {
                     this.src = this.src.replace('_small.jpg', '.jpg');
@@ -563,29 +445,29 @@
         console.log("-----");
         console.log(auction);
 
-        const existingRow = document.querySelector(`tr[data-auction-id='${auction.id}']`);//идентификатор проверяет, существует ли уже Аукцион в таблице!
+        const existingRow = document.querySelector(`tr[data-auction-id='${auction.id}']`);//ідентифікатор перевіряє, чи існує вже Аукціон у таблиці!
         if (existingRow) {
-            // если Аукцион уже существует, обновляю ячейку, в которой отображается информация об участниках Aукциона
+            // якщо Аукціон вже існує, оновлюю комірку, в якій відображається інформація про учасників Аукціону
             const existingCell = existingRow.querySelector("td.auctionParticipants");
             const newUserName = auction.auctionParticipants[auction.auctionParticipants.length - 1].username;
             let existingUserNames = existingCell.textContent;
             if (existingUserNames) {
                 existingUserNames = existingUserNames.split(',').map(name => name.trim());
-                // Разделяю существующие имена пользователей запятыми и обрезаю все пробелы!
+                // Поділяю існуючі імена користувачів комами та обрізаю всі прогалини!
                 if (existingUserNames.includes(newUserName)) {
-                    // Пользователь уже существует, повторно обновлять ячейку не нужно!
+                    // Користувач вже існує, повторно оновлювати комірку не потрібно!
                     return;
                 }
                 existingCell.textContent += `, ${newUserName}`;
-                //если нет, то к новому имени пользователя добавляется запятая и пробел перед ним
+                //якщо ні, то до нового імені користувача додається кома і пробіл перед ним
             } else {
                 existingCell.textContent = newUserName;
-                //Если существующая ячейка не содержит имен пользователей, она просто устанавливает для textContent ячейки новое имя пользователя!
+                //Якщо існуюча комірка не містить імен користувачів, вона просто встановлює для textContent комірки нове ім'я користувача!
             }
         }
 
         const tr = document.createElement('tr');
-        tr.dataset.auctionId = auction.id; //идентификатор строки в таблице Auction для updateAuction
+        tr.dataset.auctionId = auction.id; //індифікатор рядка Auction для updateAuction
         const tdDelete = document.createElement('td');
         tdDelete.innerHTML = `<a class="delete" href="#" onclick="deleteAuction(${auction.id})">DELETE</a>`;
         const tdUpdate = document.createElement('td');
@@ -750,113 +632,6 @@
     window.addEventListener('load', loadAuctions);
 
 
-    // async function savePainting() {
-    //     const titleInput = document.getElementById('title');
-    //     const publishedInput = document.getElementById('published');
-    //     const imagePathInput = document.getElementById('imagePath');
-    //     const sizeInput = document.getElementById('size');
-    //     const materialInput = document.getElementById('material');
-    //     const descriptionInput = document.getElementById('description');
-    //     const priceInput = document.getElementById('price');
-    //     const soldInput = document.getElementById('sold');
-    //     const authorsSelect = document.getElementById('authors');
-    //     const categoriesSelect = document.getElementById('categories');
-    //     const auctionsSelect = document.getElementById('auctions');
-    //
-    //     const painting = {
-    //         title: titleInput.value,
-    //         published: publishedInput.value,
-    //         imagePath: imagePathInput.value,
-    //         size: sizeInput.value,
-    //         material: materialInput.value,
-    //         description: descriptionInput.value,
-    //         price: priceInput.value,
-    //         sold: soldInput.checked, // "on" - true, "off" - false
-    //         authorId: authorsSelect.value,
-    //         categoryId: categoriesSelect.value,
-    //         auctionId: auctionsSelect.value
-    //     };
-    //     const csrfToken = document.getElementById('_csrf').content;
-    //     console.log("Token = " + csrfToken);
-    //     const csrfHeader = document.getElementById('_csrf_header').content;
-    //     const response = await fetch(`${baseURI}/paintings`, {
-    //         method: 'POST',
-    //         headers: {
-    //             'Content-Type': 'application/json',
-    //             [csrfHeader]: csrfToken
-    //         },
-    //         body: JSON.stringify(painting)
-    //     });
-    //     console.log("**********" + response.status);
-    //     if (response.status === 201) {
-    //         const loc = response.headers.get('location');
-    //         const resp = await fetch(`http://localhost:8080${loc}`)
-    //         addPainting(await resp.json())
-    //     } else {
-    //         alert('Error: ' + response.status);
-    //     }
-    // }
-
-
-    // async function uploadImage() {
-    //     const fileInput = document.getElementById('imageFile');
-    //     const file = fileInput.files[0];
-    //     const formData = new FormData();
-    //     formData.append('file', file);
-    //
-    //     const endpoint = 'https://auction6.p.rapidapi.com/';
-    //     const apiKey = 'ec624437f5msh0ed8e9128c267c3p197cdejsnb0d127b4f5df';
-    //     const host = 'auction6.p.rapidapi.com/';
-    //
-    //     const response = await fetch(endpoint, {
-    //         method: 'POST',
-    //         headers: {
-    //             'X-RapidAPI-Key': apiKey,
-    //             'X-RapidAPI-Host': host
-    //         },
-    //         body: formData
-    //     });
-    //
-    //     if (response.ok) {
-    //         const data = await response.json();
-    //         const imageUrl = data.url;
-    //         const imageInput = document.getElementById('imageFile');
-    //         imageInput.value = imageUrl;
-    //         alert('Image uploaded successfully!');
-    //     } else {
-    //         alert('Error uploading image');
-    //     }
-    // }
-
-    // async function uploadImage() {
-    //     const fileInput = document.getElementById('imageFile');
-    //     const file = fileInput.files[0];
-    //     const formData = new FormData();
-    //     formData.append('file', file);
-    //
-    //     const endpoint = 'https://upload-image-and-return-url-by-thichthicodeteam.p.rapidapi.com/api/upload-image';
-    //     const apiKey = '2cfeea843cmsh57136774e191574p1bdfcdjsnea2b49e851b9';
-    //     const host = 'upload-image-and-return-url-by-thichthicodeteam.p.rapidapi.com/';
-    //
-    //     const response = await fetch(endpoint, {
-    //         method: 'POST',
-    //         headers: {
-    //             'X-RapidAPI-Key': apiKey,
-    //             'X-RapidAPI-Host': host
-    //         },
-    //         body: formData
-    //     });
-    //
-    //     if (response.ok) {
-    //         const data = await response.json();
-    //         const imageLink = document.getElementById('imageLink');
-    //         imageLink.value = data.link;
-    //         alert('Image uploaded successfully!');
-    //     } else {
-    //         alert('Error uploading image');
-    //     }
-    // }
-
     async function savePainting() {
         const titleInput = document.getElementById('title');
         const publishedInput = document.getElementById('published');
@@ -883,38 +658,36 @@
             categoryId: categoriesSelect.value,
             auctionId: auctionsSelect.value
         };
-
         const paintingJsonStr = JSON.stringify(painting);
         const paintingBlobDTO = new Blob([paintingJsonStr], {
             type: 'application/json'
         });
 
         const formData = new FormData();
-      
+
         formData.append('file', imageFileInput.files[0]);
         formData.append('paintingDTO', paintingBlobDTO);
-  
 
         const csrfToken = document.getElementById('_csrf').content;
         const csrfHeader = document.getElementById('_csrf_header').content;
 
-       const response = await fetch(`${baseURI}/paintings/create`, {
-           method: 'POST',
-           headers: {
-               [csrfHeader]: csrfToken
-           },
-           body: formData
-       });
+        const response = await fetch(`${baseURI}/paintings/create`, {
+            method: 'POST',
+            headers: {
+                //Content-Type ніякий не вказувати,бо є файл і інші дані!
+                [csrfHeader]: csrfToken
+            },
+            body: formData
+        });
 
         if (response.status === 201) {
             const loc = response.headers.get('location');
-            const resp = await fetch(`http://localhost:8080${loc}`)
+            const resp = await fetch(`http://${currentHost}${loc}`)
             addPainting(await resp.json())
         } else {
             alert('Error: ' + response.status);
         }
     }
-
 
     async function saveCategory() {
         const categoryNameInput = document.getElementById('categoryName');
@@ -935,7 +708,7 @@
         console.log("Category!!!!!" + response.status);
         if (response.status === 201) {
             const loc = response.headers.get('location');
-            const resp = await fetch(`http://localhost:8080${loc}`)
+            const resp = await fetch(`http://${currentHost}${loc}`)
             addCategory(await resp.json())
         } else {
             alert('Error: ' + response.status);
@@ -948,29 +721,39 @@
         const authorSurnameInput = document.getElementById('surname');
         const authorBirthDateInput = document.getElementById('birthDate');
         const authorAwardsInput = document.getElementById('awards');
-        const authorImagePathInput = document.getElementById('imagePathAuthor');
+        const imageFileAuthorInput = document.getElementById('imageFileAuthor');
         const author = {
             pseudonym: authorPseudonymInput.value,
             firstName: authorFirstNameInput.value,
             surname: authorSurnameInput.value,
             birthDate: authorBirthDateInput.value,
             awards: authorAwardsInput.value,
-            imagePath: authorImagePathInput.value
+            imageLink: ""
         };
+        const authorJsonStr = JSON.stringify(author);
+        const authorBlobDTO = new Blob([authorJsonStr], {
+            type: 'application/json'
+        });
+
+        const formData = new FormData();
+
+        formData.append('file', imageFileAuthorInput.files[0]);
+        formData.append('authorDTO', authorBlobDTO);
+
         const csrfToken = document.getElementById('_csrf').content;
         const csrfHeader = document.getElementById('_csrf_header').content;
-        const response = await fetch(`${baseURI}/authors`, {
+        const response = await fetch(`${baseURI}/authors/createAuthor`, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
+                //Content-Type ніякий не вказувати,бо є файл і інші дані!
                 [csrfHeader]: csrfToken
             },
-            body: JSON.stringify(author)
+            body: formData
         });
         console.log(response.status);
         if (response.status === 201) {
             const loc = response.headers.get('location');
-            const resp = await fetch(`http://localhost:8080${loc}`)
+            const resp = await fetch(`http://${currentHost}${loc}`)
             addAuthor(await resp.json())
         } else {
             alert('Error: ' + response.status);
@@ -1007,7 +790,7 @@
         console.log(response.status);
         if (response.status === 201) {
             const loc = response.headers.get('location');
-            const resp = await fetch(`http://localhost:8080${loc}`)
+            const resp = await fetch(`http://${currentHost}${loc}`)
             addAuction(await resp.json())
         } else if (response.status === 400) {
             const errorResponse = await response.json();

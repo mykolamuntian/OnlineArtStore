@@ -23,8 +23,8 @@
         <input type="date" id="published" name="published" required th:value="${painting.published}"/>
     </div>
     <div class="frame">
-        <label for="imagePath">Image path:</label>
-        <input type="text" id="imagePath" name="imagePath" required th:value="${painting.imagePath}"/>
+        <label for="imageFile">File:</label>
+        <input type="file" id="imageFile" name="imageFile" required th:value="${painting.imageLink}"/>
     </div>
     <div class="frame">
         <label for="size">Size:</label>
@@ -70,12 +70,13 @@
     const savePaintingButton = document.getElementById('savePainting');
     const paintingIdMeta = document.getElementById("paintingId");
     const paintingId = paintingIdMeta.content;
-    const baseURI = `http://localhost:8080/adminPage/api/v1`;
+    const currentHost = window.location.host;
+    const baseURI = `http://${currentHost}/adminPage/api/v1`;
 
     async function savePainting() {
         const titleInput = document.getElementById('title');
         const publishedInput = document.getElementById('published');
-        const imagePathInput = document.getElementById('imagePath');
+        const imageFileInput = document.getElementById('imageFile');
         const sizeInput = document.getElementById('size');
         const materialInput = document.getElementById('material');
         const descriptionInput = document.getElementById('description');
@@ -88,7 +89,7 @@
         const painting = {
             title: titleInput.value,
             published: publishedInput.value,
-            imagePath: imagePathInput.value,
+            imageLink: "",
             size: sizeInput.value,
             material: materialInput.value,
             description: descriptionInput.value,
@@ -98,21 +99,31 @@
             categoryId: categoriesSelect.value,
             auctionId: auctionsSelect.value
         };
+        const paintingJsonStr = JSON.stringify(painting);
+        const paintingBlobDTO = new Blob([paintingJsonStr], {
+            type: 'application/json'
+        });
+
+        const formData = new FormData();
+
+        formData.append('file', imageFileInput.files[0]);
+        formData.append('paintingDTO', paintingBlobDTO);
+
         const csrfToken = document.getElementById('_csrf').content;
-        console.log("Token = " + csrfToken);
         const csrfHeader = document.getElementById('_csrf_header').content;
-        const response = await fetch(`${baseURI}/paintings/${paintingId}`, {
+
+        const response = await fetch(`${baseURI}/paintings/update/${paintingId}`, {
             method: 'PUT',
             headers: {
-                'Content-Type': 'application/json',
+                //Content-Type ніякий не вказувати,бо є файл і інші дані!
                 [csrfHeader]: csrfToken
             },
-            body: JSON.stringify(painting)
+            body: formData
         });
         console.log("Painting!!!!!" + response.status);
         if (response.status === 201) {
             const loc = response.headers.get('location');
-            const resp = await fetch(`http://localhost:8080${loc}`)
+            const resp = await fetch(`http://${currentHost}${loc}`)
             addPainting(await resp.json())
         } else {
             alert('Error: ' + response.status);

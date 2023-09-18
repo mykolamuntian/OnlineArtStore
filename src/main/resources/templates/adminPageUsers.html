@@ -125,7 +125,8 @@
 
 
 <script>
-    const baseURI = 'http://localhost:8080/adminPageUsers/api/v3';
+    const currentHost = window.location.host;
+    const baseURI = `http://${currentHost}/adminPageUsers/api/v3`;
     const usersTable = document.getElementById('Users-table');
     const saveUserButton = document.getElementById('save');
 
@@ -180,6 +181,7 @@
         for (const prop in userDetail) {
             const td = document.createElement('td');
             if (prop === 'user') {
+                console.log(userDetail[prop].user);
                 td.append(document.createTextNode(userDetail[prop].username)); // выводит логин User
             } else {
                 td.append(document.createTextNode(userDetail[prop]));
@@ -267,7 +269,7 @@
         console.log("**********" + response.status);
         if (response.status === 201) {
             const loc = response.headers.get('location');
-            const resp = await fetch(`http://localhost:8080${loc}`)
+            const resp = await fetch(`http://${currentHost}${loc}`)
             if (resp.status === 200) {
                 let user = await resp.json();
                 console.log(user);
@@ -310,7 +312,7 @@
         console.log(response.status);
         if (response.status === 201) {
             const loc = response.headers.get('location');
-            const resp = await fetch(`http://localhost:8080${loc}`)
+            const resp = await fetch(`http://${currentHost}${loc}`)
             if (resp.status === 200) {
                 let userDetail = await resp.json();
                 console.log(userDetail);

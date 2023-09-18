@@ -29,7 +29,8 @@
     const saveCategoryButton = document.getElementById('categorySave');
     const categoryIdMeta = document.getElementById("categoryId");
     const categoryId = categoryIdMeta.content;
-    const baseURI = `http://localhost:8080/adminPage/api/v1`;
+    const currentHost = window.location.host;
+    const baseURI = `http://${currentHost}/adminPage/api/v1`;
 
     async function categorySave() {
         const categoryNameInput = document.getElementById('categoryName');
@@ -50,7 +51,7 @@
         console.log("Category!!!!!" + response.status);
         if (response.status === 201) {
             const loc = response.headers.get('location');
-            const resp = await fetch(`http://localhost:8080${loc}`)
+            const resp = await fetch(`http://${currentHost}${loc}`)
             addCategory(await resp.json())
         } else {
             alert('Error: ' + response.status);

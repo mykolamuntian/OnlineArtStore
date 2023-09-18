@@ -31,11 +31,16 @@ public class UpdatePaintingController {
 
     @GetMapping("/{id}")
     String index(@PathVariable Integer id, Model model) {
+        Painting painting = paintingRepository.findById(id).orElseThrow();
+        Category category = painting.getCategory();
+        Author author = painting.getAuthor();
+        Auction auction = painting.getAuction();
+
         model.addAttribute("painting", paintingRepository.findById(id).orElseThrow());
         model.addAttribute("paintingId", id);
-        model.addAttribute("category", categoryRepository.findById(id).orElseThrow());
-        model.addAttribute("author", authorRepository.findById(id).orElseThrow());
-        model.addAttribute("auction", auctionRepository.findById(id).orElseThrow());
+        model.addAttribute("category", category);
+        model.addAttribute("author", author);
+        model.addAttribute("auction", auction);
         return "updatePainting";
     }
 
